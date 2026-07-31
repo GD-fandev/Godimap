@@ -109,6 +109,8 @@ ZIPをすべて展開し、`GODIMAP.exe`をダブルクリックしてくださ�
 
 `maps`、`mapdata`、`ocr_models`の名前や内部構成も変更しないでください。同じGODIMAPを二重に起動することはできません。
 
+> **使用上の注意：** Godiusでは、F11が標準でヘルプを呼び出すキーに設定されています。GODIMAPを使用する前に、ゲーム内オプションでヘルプ呼び出しキーをF11からHなど別のキーへ変更してください。
+
 ### マップデータの更新
 
 GODIMAPは起動時に公式GitHubリポジトリへ接続し、マップ画像とマップ情報のバージョンを確認します。EXE自体は自動更新しません。
@@ -133,16 +135,16 @@ GODIMAPは起動時に公式GitHubリポジトリへ接続し、マップ画像�
 
 ### 地域名OCR範囲
 
-GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で、数字列の <kbd>0</kbd> キーを押します（テンキーの0ではありません）。
+GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で、<kbd>F11</kbd> キーを押します。
 
 1. 赤い半透明ボックスをドラッグして地域名へ移動します。
 2. 右下のハンドルをドラッグしてサイズを調整します。
 3. 地域名全体だけが十分な余白とともに入るようにします。
-4. もう一度 <kbd>0</kbd> を押して確定します。
+4. もう一度 <kbd>F11</kbd> を押して確定します。
 
 ### 座標OCR範囲
 
-<kbd>Shift</kbd> + <kbd>0</kbd> を押し、黄色い半透明ボックスをゲーム内の`X:Y`へ合わせます。移動と右下ハンドルによるサイズ調整後、同じキーをもう一度押して確定します。
+<kbd>Shift</kbd> + <kbd>F11</kbd> を押し、黄色い半透明ボックスをゲーム内の`X:Y`へ合わせます。移動と右下ハンドルによるサイズ調整後、同じキーをもう一度押して確定します。
 
 ### ミニマップと現在位置
 
@@ -154,7 +156,7 @@ GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で�
 
 ### ミニマップ編集モード
 
-<kbd>Ctrl</kbd> + <kbd>0</kbd> で編集モードを開始・終了します。
+<kbd>Ctrl</kbd> + <kbd>F11</kbd> で編集モードを開始・終了します。
 
 - 左ドラッグ：ミニマップを移動
 - 右下の黄色いハンドルをドラッグ：倍率を40%～500%で変更
@@ -301,6 +303,8 @@ ZIP 전체를 압축 해제한 다음 `GODIMAP.exe`를 실행하십시오. EXE�
 
 `maps`, `mapdata`, `ocr_models`의 이름과 내부 구성을 변경하지 마십시오. GODIMAP은 중복 실행할 수 없습니다.
 
+> **사용 시 주의사항:** 가디우스 내에서 F11은 도움말을 호출하는 키입니다. 본 툴을 사용하기 전에 게임 내 옵션에서 도움말 호출 키를 F11에서 H 등 다른 키로 변경한 뒤 사용하십시오.
+
 ### 맵 데이터 업데이트
 
 GODIMAP은 실행 시 공식 GitHub 저장소에 접속하여 지도 이미지와 지도 정보의 버전을 확인합니다. EXE 자체는 자동 업데이트하지 않습니다.
@@ -325,16 +329,16 @@ GODIMAP은 실행 시 공식 GitHub 저장소에 접속하여 지도 이미지�
 
 ### 지역명 OCR 영역
 
-Godius 또는 GODIMAP 대상 창이 선택된 상태에서 숫자열의 <kbd>0</kbd> 키를 누릅니다(텐키 0 제외).
+Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>F11</kbd> 키를 누릅니다.
 
 1. 붉은 반투명 상자를 드래그하여 지역명 위치로 옮깁니다.
 2. 오른쪽 아래 핸들을 드래그하여 크기를 조절합니다.
 3. 지역명 전체만 여유 있게 들어오도록 맞춥니다.
-4. <kbd>0</kbd> 키를 다시 눌러 확정합니다.
+4. <kbd>F11</kbd> 키를 다시 눌러 확정합니다.
 
 ### 좌표 OCR 영역
 
-<kbd>Shift</kbd> + <kbd>0</kbd>을 눌러 노란 반투명 상자를 게임의 `X:Y`에 맞춥니다. 위치와 우측 하단 핸들 크기를 조절한 후 같은 키를 다시 눌러 확정합니다.
+<kbd>Shift</kbd> + <kbd>F11</kbd>을 눌러 노란 반투명 상자를 게임의 `X:Y`에 맞춥니다. 위치와 우측 하단 핸들 크기를 조절한 후 같은 키를 다시 눌러 확정합니다.
 
 ### 미니맵과 현재 위치
 
@@ -346,7 +350,7 @@ Godius 또는 GODIMAP 대상 창이 선택된 상태에서 숫자열의 <kbd>0</
 
 ### 미니맵 편집 모드
 
-<kbd>Ctrl</kbd> + <kbd>0</kbd>으로 편집 모드를 켜거나 끕니다.
+<kbd>Ctrl</kbd> + <kbd>F11</kbd>로 편집 모드를 켜거나 끕니다.
 
 - 왼쪽 드래그: 미니맵 이동
 - 오른쪽 아래 노란 핸들 드래그: 배율 40%～500% 조절
@@ -493,6 +497,8 @@ Extract the entire ZIP and run `GODIMAP.exe`. Do not move the EXE by itself. Cre
 
 Do not rename or rearrange `maps`, `mapdata`, or `ocr_models`. Only one GODIMAP instance can run at a time.
 
+> **Important:** F11 opens Help by default in Godius. Before using GODIMAP, open the in-game options and change the Help key from F11 to another key such as H.
+
 ### Map-data updates
 
 At startup, GODIMAP contacts the official GitHub repository to check the version of the map images and metadata. The EXE itself is not updated automatically.
@@ -517,16 +523,16 @@ This version check may send ordinary connection information, such as your IP add
 
 ### Region-name OCR area
 
-With Godius or a relevant GODIMAP window selected, press the number-row <kbd>0</kbd> key (not the numeric-keypad 0).
+With Godius or a relevant GODIMAP window selected, press <kbd>F11</kbd>.
 
 1. Drag the translucent red box over the region name.
 2. Drag its lower-right handle to resize it.
 3. Include the full region name with a small margin and as little unrelated UI as possible.
-4. Press <kbd>0</kbd> again to confirm.
+4. Press <kbd>F11</kbd> again to confirm.
 
 ### Coordinate OCR area
 
-Press <kbd>Shift</kbd> + <kbd>0</kbd> and place the translucent yellow box over the in-game `X:Y` display. Move and resize it with the lower-right handle, then press the same shortcut again to confirm.
+Press <kbd>Shift</kbd> + <kbd>F11</kbd> and place the translucent yellow box over the in-game `X:Y` display. Move and resize it with the lower-right handle, then press the same shortcut again to confirm.
 
 ### Minimap and current position
 
@@ -538,7 +544,7 @@ A matching registered region name displays its minimap. On a calibrated map, a y
 
 ### Minimap edit mode
 
-Press <kbd>Ctrl</kbd> + <kbd>0</kbd> to enter or leave edit mode.
+Press <kbd>Ctrl</kbd> + <kbd>F11</kbd> to enter or leave edit mode.
 
 - Left-drag: move the minimap
 - Drag the yellow lower-right handle: change scale from 40% to 500%
