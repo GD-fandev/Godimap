@@ -56,7 +56,7 @@ SWP_NOMOVE = 0x0002
 SWP_NOACTIVATE = 0x0010
 SWP_FRAMECHANGED = 0x0020
 SWP_SHOWWINDOW = 0x0040
-VK_OEM_3 = 0xC0  # ` / ~ key, immediately left of 1
+VK_0 = 0x30  # Number-row 0 key (not the numeric keypad)
 VK_SHIFT = 0x10
 VK_CONTROL = 0x11
 
@@ -101,6 +101,10 @@ kernel32.QueryFullProcessImageNameW.argtypes = [wintypes.HANDLE, wintypes.DWORD,
 kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
 kernel32.CreateMutexW.argtypes = [ctypes.c_void_p, wintypes.BOOL, wintypes.LPCWSTR]
 kernel32.CreateMutexW.restype = wintypes.HANDLE
+
+
+def is_toggle_key_down():
+    return bool(user32.GetAsyncKeyState(VK_0) & 0x8000)
 
 
 DEFAULT_CONFIG = {
@@ -177,12 +181,12 @@ def contributors_for_map(map_record):
 STATUS_TEXTS = {
     "searching": {"KR": "Godius Client 탐색 중", "JP": "Godius Clientを検索中", "EN": "Searching for Godius Client"},
     "no_map_resize": {"KR": "표시 중인 미니맵이 없어 크기를 조절할 수 없습니다.", "JP": "表示中のミニマップがないため、サイズを変更できません。", "EN": "No minimap is available to resize."},
-    "resize_mode": {"KR": "미니맵 크기 조절 중 · 노란 꼭짓점을 드래그 · Ctrl+`로 완료", "JP": "ミニマップのサイズ変更中・黄色いハンドルをドラッグ・Ctrl+`で完了", "EN": "Resizing minimap · Drag the yellow handle · Ctrl+` to finish"},
+    "resize_mode": {"KR": "미니맵 크기 조절 중 · 노란 꼭짓점을 드래그 · Ctrl+0으로 완료", "JP": "ミニマップのサイズ変更中・黄色いハンドルをドラッグ・Ctrl+0で完了", "EN": "Resizing minimap · Drag the yellow handle · Ctrl+0 to finish"},
     "opacity": {"KR": "미니맵 불투명도 {percent}%", "JP": "ミニマップ不透明度 {percent}%", "EN": "Minimap opacity {percent}%"},
     "size": {"KR": "미니맵 크기 {percent}% · 꼭짓점을 놓으면 저장", "JP": "ミニマップサイズ {percent}%・ハンドルを離すと保存", "EN": "Minimap size {percent}% · Release the handle to save"},
     "target_missing": {"KR": "Godius Client 창을 찾지 못했습니다.", "JP": "Godius Clientウィンドウが見つかりません。", "EN": "Godius Client window was not found."},
-    "need_name_region": {"KR": "` 키를 눌러 맵 이름 영역을 먼저 저장해 주세요.", "JP": "`キーを押して、先にマップ名の範囲を保存してください。", "EN": "Press ` and save the map-name region first."},
-    "need_coordinate_region": {"KR": "Shift+` 키를 눌러 좌표 영역을 저장해 주세요.", "JP": "Shift+`キーを押して、座標範囲を保存してください。", "EN": "Press Shift+` and save the coordinate region."},
+    "need_name_region": {"KR": "숫자열 0 키를 눌러 맵 이름 영역을 먼저 저장해 주세요.", "JP": "数字列の0キーを押して、先にマップ名の範囲を保存してください。", "EN": "Press the number-row 0 key and save the map-name region first."},
+    "need_coordinate_region": {"KR": "Shift+0을 눌러 좌표 영역을 저장해 주세요.", "JP": "Shift+0を押して、座標範囲を保存してください。", "EN": "Press Shift+0 and save the coordinate region."},
     "debug_overlap": {"KR": "GODIMAP 창이 OCR 영역을 가림 · 창을 옮겨 주세요", "JP": "GODIMAPウィンドウがOCR範囲を覆っています・ウィンドウを移動してください", "EN": "The GODIMAP window overlaps the OCR region · Move the window"},
     "map_overlap": {"KR": "미니맵이 OCR 영역을 가림 · 수정 모드에서 옮겨 주세요", "JP": "ミニマップがOCR範囲を覆っています・編集モードで移動してください", "EN": "The minimap overlaps the OCR region · Move it in edit mode"},
     "capture_failed": {"KR": "{backend} 캡처 실패: {error}", "JP": "{backend}のキャプチャーに失敗: {error}", "EN": "{backend} capture failed: {error}"},
@@ -807,12 +811,12 @@ class GodimapOcrDebug:
         help_texts = {
             "KR": (
                 "캡처 영역 설정\n"
-                "  ` : 맵 이름 OCR 영역 설정\n"
-                "  Shift + ` : X:Y 좌표 OCR 영역 설정\n\n"
+                "  숫자열 0 : 맵 이름 OCR 영역 설정\n"
+                "  Shift + 0 : X:Y 좌표 OCR 영역 설정\n\n"
                 "  박스 드래그 : 영역 이동\n"
                 "  우측 하단 손잡이 드래그 : 영역 크기 조절\n\n"
                 "미니맵 조작\n"
-                "  Ctrl + ` : 크기 조절 모드 시작/종료\n"
+                "  Ctrl + 0 : 크기 조절 모드 시작/종료\n"
                 "  우측 하단 노란 손잡이 드래그 : 크기 조절 (40~500%)\n"
                 "  마우스 휠 : 불투명도 조절 (30~100%)\n"
                 "  드래그 : 미니맵 이동\n\n"
@@ -820,12 +824,12 @@ class GodimapOcrDebug:
             ),
             "JP": (
                 "キャプチャー範囲の設定\n"
-                "  ` : マップ名のOCR範囲を設定\n"
-                "  Shift + ` : X:Y座標のOCR範囲を設定\n\n"
+                "  数字列の0 : マップ名のOCR範囲を設定\n"
+                "  Shift + 0 : X:Y座標のOCR範囲を設定\n\n"
                 "  ボックスをドラッグ : 範囲を移動\n"
                 "  右下のハンドルをドラッグ : 範囲のサイズを変更\n\n"
                 "ミニマップ操作\n"
-                "  Ctrl + ` : サイズ変更モードの開始／終了\n"
+                "  Ctrl + 0 : サイズ変更モードの開始／終了\n"
                 "  右下の黄色いハンドルをドラッグ : サイズ変更（40～500%）\n"
                 "  マウスホイール : 不透明度の調整（30～100%）\n"
                 "  ドラッグ : ミニマップの移動\n\n"
@@ -833,12 +837,12 @@ class GodimapOcrDebug:
             ),
             "EN": (
                 "Capture regions\n"
-                "  ` : Set the map-name OCR region\n"
-                "  Shift + ` : Set the X:Y coordinate OCR region\n\n"
+                "  Number-row 0 : Set the map-name OCR region\n"
+                "  Shift + 0 : Set the X:Y coordinate OCR region\n\n"
                 "  Drag the box : Move the region\n"
                 "  Drag the bottom-right handle : Resize the region\n\n"
                 "Minimap controls\n"
-                "  Ctrl + ` : Enter or leave resize mode\n"
+                "  Ctrl + 0 : Enter or leave resize mode\n"
                 "  Drag the yellow bottom-right handle : Resize (40–500%)\n"
                 "  Mouse wheel : Adjust opacity (30–100%)\n"
                 "  Drag : Move the minimap\n\n"
@@ -1766,7 +1770,7 @@ class GodimapOcrDebug:
             return
         self.reload_map_database_if_changed()
         self.find_target()
-        toggle_down = self.is_target_foreground() and bool(user32.GetAsyncKeyState(VK_OEM_3) & 0x8000)
+        toggle_down = self.is_target_foreground() and is_toggle_key_down()
         if toggle_down and not self.last_toggle_down:
             shift_down = bool(user32.GetAsyncKeyState(VK_SHIFT) & 0x8000)
             control_down = bool(user32.GetAsyncKeyState(VK_CONTROL) & 0x8000)
