@@ -7,30 +7,30 @@
 - [日本語](#ja)
   - [概要と主な機能](#ja-overview)
   - [冒険者様を募集しています](#ja-adventurers)
-  - [今後の追加予定](#ja-roadmap)
   - [導入・起動・更新](#ja-install)
   - [基本操作](#ja-controls)
   - [設定・トラブルシューティング](#ja-settings)
   - [ソースコードとビルド](#ja-development)
   - [ライセンスと注意事項](#ja-license)
+  - [今後の追加予定](#ja-roadmap)
 - [한국어](#ko)
   - [개요와 주요 기능](#ko-overview)
   - [모험가님을 모집합니다](#ko-adventurers)
-  - [향후 추가 예정](#ko-roadmap)
   - [설치·실행·업데이트](#ko-install)
   - [기본 조작](#ko-controls)
   - [설정·문제 해결](#ko-settings)
   - [소스 코드와 빌드](#ko-development)
   - [라이선스와 주의 사항](#ko-license)
+  - [향후 추가 예정](#ko-roadmap)
 - [English](#en)
   - [Overview and features](#en-overview)
   - [Adventurers wanted](#en-adventurers)
-  - [Planned additions](#en-roadmap)
   - [Installation, launch, and updates](#en-install)
   - [Basic controls](#en-controls)
   - [Settings and troubleshooting](#en-settings)
   - [Source code and building](#en-development)
   - [Licenses and notices](#en-license)
+  - [Planned additions](#en-roadmap)
 
 ---
 
@@ -45,6 +45,8 @@
 GODIMAPは、Godiusのゲーム画面に表示される地域名と現在座標をOCRで読み取り、対応するミニマップと現在位置をゲーム画面上へ表示する情報提供型ツールです。
 
 ゲームクライアントの改変、通信解析、自動操作、マクロ操作は行いません。
+
+**[GODIMAP本体（GODIMAP.exe同梱ZIP）のリリースページ](https://github.com/GD-fandev/Godimap/releases)**
 
 - 韓国語・日本語・英語の地域名OCR
 - 地域に対応するミニマップの自動表示
@@ -72,14 +74,6 @@ GODIMAPには、まだ測量が完了していない未調査地域がありま�
 ささやかですが感謝の印として、次回の配布時に地図の完成へご協力くださった冒険者様のお名前を、該当地域のミニマップ左下に刻ませていただきたいと思います。
 
 皆様の冒険の記録が、次にその地を訪れる冒険者様の道標となります。ご協力を心よりお待ちしております。
-
-<a id="ja-roadmap"></a>
-
-## 今後の追加予定
-
-- すべての町のマップに、商店およびギルドの表示を追加
-- フィールド進入時の道しるべガイドを追加（座標および大まかな方向を案内）
-- 日本語の表記名は、今後公式表記に合わせて修正される可能性があります
 
 <a id="ja-install"></a>
 
@@ -215,8 +209,18 @@ Python 3.12環境で依存パッケージをインストールした後、`tools
 
 - GODIMAP独自のソースコードは[MIT License](LICENSE.txt)で公開しています。
 - ゲーム関連素材、地図画像、アイコン等はMIT Licenseの対象外です。詳細は[Asset Notice](licenses/ASSET_NOTICE.txt)をご確認ください。
+- ダンジョン地図画像の出典：[Godius公式ホームページ](https://www.godius.co.kr/guide_8?t_id=2)
+- 町の地図画像の出典：[Godius Online Forum](http://godius.s201.xrea.com/mmain.html)
 - 第三者ソフトウェアとOCRモデルについては[Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt)と`licenses/third_party`をご確認ください。
 - GODIMAPは非公式ツールです。ゲーム運営方針および素材提供元の規約に従い、各自の判断でご利用ください。
+
+<a id="ja-roadmap"></a>
+
+## 今後の追加予定
+
+- すべての町のマップに、商店およびギルドの表示を追加
+- フィールド進入時の道しるべガイドを追加（座標および大まかな方向を案内）
+- 日本語の表記名は、今後公式表記に合わせて修正される可能性があります
 
 [目次へ戻る](#contents)
 
@@ -233,6 +237,8 @@ Python 3.12環境で依存パッケージをインストールした後、`tools
 GODIMAP은 Godius 게임 화면에 표시되는 지역명과 현재 좌표를 OCR로 읽어, 해당 미니맵과 현재 위치를 게임 화면 위에 표시하는 정보 제공형 도구입니다.
 
 게임 클라이언트 변조, 통신 분석, 자동 조작 및 매크로 기능은 사용하지 않습니다.
+
+**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 릴리스 페이지](https://github.com/GD-fandev/Godimap/releases)**
 
 - 한국어·일본어·영어 지역명 OCR
 - 지역에 맞는 미니맵 자동 표시
@@ -260,14 +266,6 @@ GODIMAP에는 아직 측량이 완료되지 않은 미조사 지역이 있습니
 많은 것을 드리지는 못하지만 감사의 뜻으로, 다음 배포 때 지도 완성에 협력해 주신 모험가님의 이름을 해당 지역 미니맵 좌측 하단에 새겨드리고자 합니다.
 
 여러분의 모험 기록이 다음 모험가의 이정표가 됩니다. 많은 협력을 부탁드립니다.
-
-<a id="ko-roadmap"></a>
-
-## 향후 추가 예정
-
-- 모든 마을 지도에 상점 및 길드 표시 추가
-- 필드 진입 시 이정표 가이드 추가(좌표 및 대략적인 방향 안내)
-- 일본어 표기명은 추후 공식 표기에 맞춰 수정될 수 있습니다
 
 <a id="ko-install"></a>
 
@@ -403,8 +401,18 @@ Python 3.12 환경에 의존 패키지를 설치한 다음 `tools/build_godimap.
 
 - GODIMAP 자체 소스 코드는 [MIT License](LICENSE.txt)로 공개합니다.
 - 게임 관련 소재, 지도 이미지 및 아이콘 등은 MIT License 대상이 아닙니다. 자세한 내용은 [Asset Notice](licenses/ASSET_NOTICE.txt)를 확인하십시오.
+- 던전 지도 이미지 출처: [가디우스 공식 홈페이지](https://www.godius.co.kr/guide_8?t_id=2)
+- 마을 지도 이미지 출처: [가디우스 온라인 포럼](http://godius.s201.xrea.com/mmain.html)
 - 제3자 소프트웨어와 OCR 모델은 [Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt) 및 `licenses/third_party`를 확인하십시오.
 - GODIMAP은 비공식 도구입니다. 게임 운영 정책과 소재 제공자의 규정을 준수하고 각자의 판단에 따라 사용하십시오.
+
+<a id="ko-roadmap"></a>
+
+## 향후 추가 예정
+
+- 모든 마을 지도에 상점 및 길드 표시 추가
+- 필드 진입 시 이정표 가이드 추가(좌표 및 대략적인 방향 안내)
+- 일본어 표기명은 추후 공식 표기에 맞춰 수정될 수 있습니다
 
 [목차로 돌아가기](#contents)
 
@@ -421,6 +429,8 @@ Python 3.12 환경에 의존 패키지를 설치한 다음 `tools/build_godimap.
 GODIMAP is an information-only overlay that reads the region name and current coordinates shown in the Godius game window and displays the corresponding minimap and player position.
 
 It does not modify the game client, analyze network traffic, automate gameplay, or provide macro functions.
+
+**[GODIMAP release page (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases)**
 
 - Korean, Japanese, and English region-name OCR
 - Automatic minimap selection
@@ -448,14 +458,6 @@ We are looking for courageous adventurers who are willing to explore unknown are
 As a small token of appreciation, the names of adventurers who help complete a region may be displayed in the lower-left corner of that region's minimap in a future release.
 
 Your exploration can become a guidepost for the adventurers who follow. Thank you for your support.
-
-<a id="en-roadmap"></a>
-
-## Planned additions
-
-- Shop and guild markers on every town map
-- A signpost guide when entering a field, showing coordinates and an approximate direction
-- Japanese display names may be revised later to match future official terminology
 
 <a id="en-install"></a>
 
@@ -591,7 +593,17 @@ Detailed surveying-tool instructions are provided separately to designated adven
 
 - Original GODIMAP source code is released under the [MIT License](LICENSE.txt).
 - Game-related assets, map images, and icons are not automatically covered by the MIT License. See the [Asset Notice](licenses/ASSET_NOTICE.txt).
+- Dungeon map image source: [Official Godius website](https://www.godius.co.kr/guide_8?t_id=2)
+- Town map image source: [Godius Online Forum](http://godius.s201.xrea.com/mmain.html)
 - See [Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt) and `licenses/third_party` for third-party software and OCR-model terms.
 - GODIMAP is an unofficial tool. Follow the game operator's policies and the terms of each asset provider, and use it at your own discretion.
+
+<a id="en-roadmap"></a>
+
+## Planned additions
+
+- Shop and guild markers on every town map
+- A signpost guide when entering a field, showing coordinates and an approximate direction
+- Japanese display names may be revised later to match future official terminology
 
 [Back to contents](#contents)
