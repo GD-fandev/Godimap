@@ -1,0 +1,21 @@
+{
+  "id": "hell6f",
+  "names": {
+    "ko": [
+      "헬 6층"
+    ],
+    "ja": [
+      "ヘル6F"
+    ],
+    "en": [
+      "hell 6F"
+    ]
+  },
+  "image": "maps/hell/hell6F.jpg",
+  "imageSize": {
+    "width": 554,
+    "height": 272
+  },
+  "controlPoints": [],
+  "transform": null
+}

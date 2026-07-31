@@ -1,0 +1,21 @@
+{
+  "id": "wback2f",
+  "names": {
+    "ko": [
+      "서부등뼈동굴2"
+    ],
+    "ja": [
+      "西部背骨洞窟2"
+    ],
+    "en": [
+      "west spine cave 2"
+    ]
+  },
+  "image": "maps/wbackbone/wback2F.jpg",
+  "imageSize": {
+    "width": 537,
+    "height": 287
+  },
+  "controlPoints": [],
+  "transform": null
+}

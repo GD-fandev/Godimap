@@ -1,0 +1,21 @@
+{
+  "id": "echil1",
+  "names": {
+    "ko": [
+      "에칠린동굴1층"
+    ],
+    "ja": [
+      "エチリン洞窟1F"
+    ],
+    "en": [
+      "echilin cave 1F"
+    ]
+  },
+  "image": "maps/echil/echil1.jpg",
+  "imageSize": {
+    "width": 586,
+    "height": 294
+  },
+  "controlPoints": [],
+  "transform": null
+}

@@ -1,0 +1,21 @@
+{
+  "id": "siad3f",
+  "names": {
+    "ko": [
+      "샤드뮴동굴3"
+    ],
+    "ja": [
+      "シャドミュム洞窟3"
+    ],
+    "en": [
+      "Shadmum Cave 3"
+    ]
+  },
+  "image": "maps/siadmyoom/siad3F.jpg",
+  "imageSize": {
+    "width": 485,
+    "height": 281
+  },
+  "controlPoints": [],
+  "transform": null
+}

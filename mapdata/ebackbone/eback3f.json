@@ -1,0 +1,21 @@
+{
+  "id": "eback3f",
+  "names": {
+    "ko": [
+      "동부등뼈동굴3"
+    ],
+    "ja": [
+      "東部背骨洞窟3"
+    ],
+    "en": [
+      "East spine cave 3"
+    ]
+  },
+  "image": "maps/ebackbone/eback3F.jpg",
+  "imageSize": {
+    "width": 533,
+    "height": 295
+  },
+  "controlPoints": [],
+  "transform": null
+}

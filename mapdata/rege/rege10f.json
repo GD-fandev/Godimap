@@ -1,0 +1,24 @@
+{
+  "id": "rege10f",
+  "names": {
+    "ko": [
+      "레게지하동굴10층",
+      "칼리지하동굴10층"
+    ],
+    "ja": [
+      "レゲ地下洞窟10F",
+      "カリ地下洞窟10F"
+    ],
+    "en": [
+      "Rege B Cave 10F",
+      "Kali B Cave 10F"
+    ]
+  },
+  "image": "maps/rege/rege10f.jpg",
+  "imageSize": {
+    "width": 508,
+    "height": 268
+  },
+  "controlPoints": [],
+  "transform": null
+}

@@ -1,0 +1,21 @@
+{
+  "id": "hell3f",
+  "names": {
+    "ko": [
+      "헬 3층"
+    ],
+    "ja": [
+      "ヘル3F"
+    ],
+    "en": [
+      "hell 3F"
+    ]
+  },
+  "image": "maps/hell/hell3F.jpg",
+  "imageSize": {
+    "width": 536,
+    "height": 277
+  },
+  "controlPoints": [],
+  "transform": null
+}

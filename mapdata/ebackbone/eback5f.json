@@ -1,0 +1,21 @@
+{
+  "id": "eback5f",
+  "names": {
+    "ko": [
+      "동부등뼈동굴5"
+    ],
+    "ja": [
+      "東部背骨洞窟5"
+    ],
+    "en": [
+      "East spine cave 5"
+    ]
+  },
+  "image": "maps/ebackbone/eback5F.jpg",
+  "imageSize": {
+    "width": 541,
+    "height": 282
+  },
+  "controlPoints": [],
+  "transform": null
+}

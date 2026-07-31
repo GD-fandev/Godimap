@@ -1,0 +1,19 @@
+{
+  "id": "evil1",
+  "names": {
+    "ko": [
+      "에블린동굴1"
+    ],
+    "ja": [
+      "エブリン洞窟1F"
+    ],
+    "en": []
+  },
+  "image": "maps/evli/evil1.jpg",
+  "imageSize": {
+    "width": 589,
+    "height": 299
+  },
+  "controlPoints": [],
+  "transform": null
+}

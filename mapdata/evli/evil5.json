@@ -1,0 +1,19 @@
+{
+  "id": "evil5",
+  "names": {
+    "ko": [
+      "에블린동굴5"
+    ],
+    "ja": [
+      "エブリン洞窟5F"
+    ],
+    "en": []
+  },
+  "image": "maps/evli/evil5.jpg",
+  "imageSize": {
+    "width": 585,
+    "height": 293
+  },
+  "controlPoints": [],
+  "transform": null
+}

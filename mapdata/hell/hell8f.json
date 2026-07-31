@@ -1,0 +1,21 @@
+{
+  "id": "hell8f",
+  "names": {
+    "ko": [
+      "헬 8층"
+    ],
+    "ja": [
+      "ヘル8F"
+    ],
+    "en": [
+      "hell 8F"
+    ]
+  },
+  "image": "maps/hell/hell8F.jpg",
+  "imageSize": {
+    "width": 554,
+    "height": 285
+  },
+  "controlPoints": [],
+  "transform": null
+}

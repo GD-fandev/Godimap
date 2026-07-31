@@ -1,0 +1,19 @@
+{
+  "id": "evil4",
+  "names": {
+    "ko": [
+      "에블린동굴4"
+    ],
+    "ja": [
+      "エブリン洞窟4F"
+    ],
+    "en": []
+  },
+  "image": "maps/evli/evil4.jpg",
+  "imageSize": {
+    "width": 562,
+    "height": 278
+  },
+  "controlPoints": [],
+  "transform": null
+}

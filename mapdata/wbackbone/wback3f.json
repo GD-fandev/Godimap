@@ -1,0 +1,21 @@
+{
+  "id": "wback3f",
+  "names": {
+    "ko": [
+      "서부등뼈동굴3"
+    ],
+    "ja": [
+      "西部背骨洞窟3"
+    ],
+    "en": [
+      "west spine cave 3"
+    ]
+  },
+  "image": "maps/wbackbone/wback3F.jpg",
+  "imageSize": {
+    "width": 574,
+    "height": 275
+  },
+  "controlPoints": [],
+  "transform": null
+}

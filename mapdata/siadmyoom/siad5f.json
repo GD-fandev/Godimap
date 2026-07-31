@@ -1,0 +1,21 @@
+{
+  "id": "siad5f",
+  "names": {
+    "ko": [
+      "샤드뮴동굴5"
+    ],
+    "ja": [
+      "シャドミュム洞窟5"
+    ],
+    "en": [
+      "Shadmum Cave 5"
+    ]
+  },
+  "image": "maps/siadmyoom/siad5F.jpg",
+  "imageSize": {
+    "width": 482,
+    "height": 249
+  },
+  "controlPoints": [],
+  "transform": null
+}

@@ -1,0 +1,21 @@
+{
+  "id": "eback1f",
+  "names": {
+    "ko": [
+      "동부등뼈동굴1"
+    ],
+    "ja": [
+      "東部背骨洞窟1"
+    ],
+    "en": [
+      "East spine cave 1"
+    ]
+  },
+  "image": "maps/ebackbone/eback1F.jpg",
+  "imageSize": {
+    "width": 553,
+    "height": 271
+  },
+  "controlPoints": [],
+  "transform": null
+}

@@ -1,0 +1,19 @@
+{
+  "id": "evil3",
+  "names": {
+    "ko": [
+      "에블린동굴3"
+    ],
+    "ja": [
+      "エブリン洞窟3F"
+    ],
+    "en": []
+  },
+  "image": "maps/evli/evil3.jpg",
+  "imageSize": {
+    "width": 576,
+    "height": 295
+  },
+  "controlPoints": [],
+  "transform": null
+}

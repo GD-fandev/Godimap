@@ -1,0 +1,51 @@
+# Python environments and generated caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated local output
+build/
+dist/
+output/
+vendor/gh/
+
+# Maintainer-only tools (kept locally, never published in the public repository)
+assets/icons/calicon.ico
+assets/icons/calicon.png
+docs/CALIBRATOR_GUIDE_JA.md
+packaging/GODIMAP_CALIBRATOR.spec
+source/build_map_update.py
+source/contributor_editor.py
+source/map_calibrator.py
+source/publish_map_update.py
+tests/test_map_publisher.py
+tools/build_calibrator.bat
+tools/publish_map_update.bat
+tools/run_build_map_update.bat
+tools/run_contributor_editor.bat
+tools/run_map_calibrator.bat
+tools/setup_github_cli.ps1
+
+# Locally generated GitHub Release assets
+release/
+
+# Temporary updater/test working directories
+godimap-update-test-*/
+godimap-update-stage-*/
+godimap-update-backup-*/
+
+# Common editor and OS clutter
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.bak
+
+# Other build systems
+**/bin/
+**/obj/

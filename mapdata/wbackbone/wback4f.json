@@ -1,0 +1,21 @@
+{
+  "id": "wback4f",
+  "names": {
+    "ko": [
+      "서부등뼈동굴4"
+    ],
+    "ja": [
+      "西部背骨洞窟4"
+    ],
+    "en": [
+      "west spine cave 4"
+    ]
+  },
+  "image": "maps/wbackbone/wback4F.jpg",
+  "imageSize": {
+    "width": 567,
+    "height": 281
+  },
+  "controlPoints": [],
+  "transform": null
+}

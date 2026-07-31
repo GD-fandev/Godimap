@@ -1,0 +1,21 @@
+{
+  "id": "hell2f",
+  "names": {
+    "ko": [
+      "헬 2층"
+    ],
+    "ja": [
+      "ヘル2F"
+    ],
+    "en": [
+      "hell 2F"
+    ]
+  },
+  "image": "maps/hell/hell2F.jpg",
+  "imageSize": {
+    "width": 579,
+    "height": 239
+  },
+  "controlPoints": [],
+  "transform": null
+}

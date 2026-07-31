@@ -1,0 +1,21 @@
+{
+  "id": "saiefe2f",
+  "names": {
+    "ko": [
+      "사에프동굴2"
+    ],
+    "ja": [
+      "サエフ洞窟2"
+    ],
+    "en": [
+      "Saiefe Cave 2"
+    ]
+  },
+  "image": "maps/saiefe/saiefe2F.jpg",
+  "imageSize": {
+    "width": 545,
+    "height": 191
+  },
+  "controlPoints": [],
+  "transform": null
+}
