@@ -181,6 +181,12 @@ GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で�
 - ゲームが起動中か、最小化されていないか確認してください。
 - ゲームを管理者権限で起動している場合、GODIMAPにも同等の権限が必要になることがあります。
 
+### キーボードで移動できない
+
+- GodiusとGODIMAPの互換モードおよび管理者権限の設定が異なる場合、キーボードによる移動ができない、動作が重くなる、フリーズするといった問題が発生することがあります。両方の互換性設定を同じ状態にしてください。
+- 基本的には、管理者権限は両方とも無効にすることを推奨します。GodiusをWindows 8互換モードで実行している場合は、GODIMAPにも同じ互換モードを設定してください。
+- それでも移動キーが反応しない場合は、キャプチャー範囲編集モードを終了してから、左Shift、右Shift、左Ctrl、右Ctrlをそれぞれ一度ずつ押して離すと改善する場合があります。
+
 ### OCRが認識しない、または途切れる
 
 - 地域名・座標範囲を再設定し、文字切れや余分なUIがないか確認してください。
@@ -375,6 +381,12 @@ Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>F11</kbd> 키를
 - 게임이 실행 중인지, 최소화되어 있지 않은지 확인하십시오.
 - 게임을 관리자 권한으로 실행했다면 GODIMAP에도 같은 권한이 필요할 수 있습니다.
 
+### 키보드로 이동할 수 없는 경우
+
+- Godius와 GODIMAP의 호환 모드 및 관리자 권한 설정이 서로 다르면 키보드 이동 불가, 동작 지연, 정지 등의 문제가 발생할 수 있습니다. 두 프로그램의 호환성 설정을 동일하게 맞추십시오.
+- 기본적으로 관리자 권한은 양쪽 모두 해제하는 것을 권장합니다. Godius를 Windows 8 호환 모드로 실행하는 경우 GODIMAP에도 같은 호환 모드를 적용하십시오.
+- 그래도 이동 키가 반응하지 않는다면 캡처 영역 편집 모드를 종료한 다음, 왼쪽 Shift, 오른쪽 Shift, 왼쪽 Ctrl, 오른쪽 Ctrl을 각각 한 번씩 눌렀다 떼면 해결될 수 있습니다.
+
 ### OCR이 인식하지 못하거나 잠시 끊기는 경우
 
 - 지역명과 좌표 영역을 다시 설정하고, 글자 잘림이나 불필요한 UI가 포함되지 않았는지 확인하십시오.
@@ -568,6 +580,12 @@ This file stores the interface language, OCR regions, window position, and minim
 
 - Confirm that the game is running and not minimized.
 - If the game runs as administrator, GODIMAP may need the same privilege level.
+
+### Keyboard movement does not work
+
+- If Godius and GODIMAP use different compatibility-mode or administrator settings, keyboard movement may stop working, GODIMAP may slow down, or either program may freeze. Use matching compatibility settings for both programs.
+- We generally recommend running both programs without administrator privileges. If Godius uses Windows 8 compatibility mode, apply the same compatibility mode to GODIMAP.
+- If the movement keys still do not respond, leave capture-region edit mode, then press and release Left Shift, Right Shift, Left Ctrl, and Right Ctrl once each. This may restore movement.
 
 ### OCR does not recognize text or briefly drops out
 
