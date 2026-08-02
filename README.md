@@ -46,7 +46,7 @@ GODIMAPは、Godiusのゲーム画面に表示される地域名と現在座標�
 
 ゲームクライアントの改変、通信解析、自動操作、マクロ操作は行いません。
 
-**[GODIMAP本体（GODIMAP.exe同梱ZIP）のリリースページ](https://github.com/GD-fandev/Godimap/releases)**
+**[GODIMAP本体（GODIMAP.exe同梱ZIP）の現在のリリース](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
 
 - 韓国語・日本語・英語の地域名OCR
 - 地域に対応するミニマップの自動表示
@@ -260,7 +260,7 @@ GODIMAP은 Godius 게임 화면에 표시되는 지역명과 현재 좌표를 OC
 
 게임 클라이언트 변조, 통신 분석, 자동 조작 및 매크로 기능은 사용하지 않습니다.
 
-**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 릴리스 페이지](https://github.com/GD-fandev/Godimap/releases)**
+**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 현재 릴리스](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
 
 - 한국어·일본어·영어 지역명 OCR
 - 지역에 맞는 미니맵 자동 표시
@@ -460,7 +460,7 @@ GODIMAP is an information-only overlay that reads the region name and current co
 
 It does not modify the game client, analyze network traffic, automate gameplay, or provide macro functions.
 
-**[GODIMAP release page (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases)**
+**[Current GODIMAP release (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
 
 - Korean, Japanese, and English region-name OCR
 - Automatic minimap selection
