@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "version": "2026.08.02.3",
-  "asset_url": "https://github.com/GD-fandev/Godimap/releases/download/maps-2026.08.02.3/godimap-mapdata.zip",
-  "sha256": "da3f9ccc5da5e9ac17902e4fda67d2d1c943441b914afc380f6cd052bbdbf33f",
-  "size": 10891562
+  "version": "2026.08.02.4",
+  "asset_url": "https://github.com/GD-fandev/Godimap/releases/download/maps-2026.08.02.4/godimap-mapdata.zip",
+  "sha256": "cbe52d5bc8f8331a3e2e6a6fee5e9d8e573b0125f790060419aa0495f2c3c538",
+  "size": 10891567
 }
