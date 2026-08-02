@@ -46,7 +46,7 @@ GODIMAPは、Godiusのゲーム画面に表示される地域名と現在座標�
 
 ゲームクライアントの改変、通信解析、自動操作、マクロ操作は行いません。
 
-**[GODIMAP本体（GODIMAP.exe同梱ZIP）の現在のリリース](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
+**[GODIMAP本体（GODIMAP.exe同梱ZIP）の現在のリリース](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
 
 - 韓国語・日本語・英語の地域名OCR
 - 地域に対応するミニマップの自動表示
@@ -113,7 +113,7 @@ ZIPをすべて展開し、`GODIMAP.exe`をダブルクリックしてくださ�
 
 ### マップデータの更新
 
-GODIMAPは起動時に公式GitHubリポジトリへ接続し、マップ画像とマップ情報のバージョンを確認します。EXE自体は自動更新しません。
+GODIMAPは起動時に公式GitHubリポジトリへ接続し、マップ画像とマップ情報のバージョンを確認します。さらに新しいGODIMAP本体が公開されている場合は、選択中の言語でダウンロードページへの案内を表示します。EXE自体は自動更新しません。
 
 新しいマップデータがある場合は、状態欄に赤い更新案内が表示されます。案内をクリックした場合にのみZIPをダウンロードします。サイズ、SHA-256、フォルダー構成、JSON、対応画像を検証してから適用し、失敗時は以前のデータへ自動的に戻します。成功後は再起動せずに新しいデータを使用できます。
 
@@ -261,7 +261,7 @@ GODIMAP은 Godius 게임 화면에 표시되는 지역명과 현재 좌표를 OC
 
 게임 클라이언트 변조, 통신 분석, 자동 조작 및 매크로 기능은 사용하지 않습니다.
 
-**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 현재 릴리스](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
+**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 현재 릴리스](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
 
 - 한국어·일본어·영어 지역명 OCR
 - 지역에 맞는 미니맵 자동 표시
@@ -314,7 +314,7 @@ ZIP 전체를 압축 해제한 다음 `GODIMAP.exe`를 실행하십시오. EXE�
 
 ### 맵 데이터 업데이트
 
-GODIMAP은 실행 시 공식 GitHub 저장소에 접속하여 지도 이미지와 지도 정보의 버전을 확인합니다. EXE 자체는 자동 업데이트하지 않습니다.
+GODIMAP은 실행 시 공식 GitHub 저장소에 접속하여 지도 이미지와 지도 정보의 버전을 확인합니다. 또한 새로운 GODIMAP 본품이 공개되면 현재 선택한 언어로 다운로드 페이지 안내를 표시합니다. EXE 자체는 자동 업데이트하지 않습니다.
 
 새 지도 데이터가 있으면 상태 영역에 빨간색 업데이트 안내가 나타납니다. 안내를 클릭해야만 ZIP을 다운로드합니다. 파일 크기, SHA-256, 폴더 구조, JSON 및 대응 이미지를 검증한 후 적용하며, 실패하면 이전 데이터로 자동 복구합니다. 성공하면 프로그램을 다시 시작하지 않아도 새 데이터가 반영됩니다.
 
@@ -462,7 +462,7 @@ GODIMAP is an information-only overlay that reads the region name and current co
 
 It does not modify the game client, analyze network traffic, automate gameplay, or provide macro functions.
 
-**[Current GODIMAP release (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases#release-v0.1.1-alpha)**
+**[Current GODIMAP release (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
 
 - Korean, Japanese, and English region-name OCR
 - Automatic minimap selection
@@ -515,7 +515,7 @@ Do not rename or rearrange `maps`, `mapdata`, or `ocr_models`. Only one GODIMAP 
 
 ### Map-data updates
 
-At startup, GODIMAP contacts the official GitHub repository to check the version of the map images and metadata. The EXE itself is not updated automatically.
+At startup, GODIMAP contacts the official GitHub repository to check the version of the map images and metadata. It also shows a localized link to the download page when a newer GODIMAP release is available. The EXE itself is not updated automatically.
 
 When an update is available, a red notice appears in the status area. The ZIP is downloaded only after you click that notice. GODIMAP validates its size, SHA-256 hash, directory structure, JSON files, and referenced images before installation. A failed installation automatically restores the previous data. A successful update is loaded without restarting the program.
 

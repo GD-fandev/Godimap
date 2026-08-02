@@ -8,6 +8,7 @@ import time
 import tkinter as tk
 import traceback
 import unicodedata
+import webbrowser
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from ctypes import wintypes
@@ -17,6 +18,7 @@ from tkinter import messagebox, ttk
 import dxcam
 from PIL import Image, ImageDraw, ImageEnhance, ImageGrab, ImageOps, ImageTk
 from map_store import MapStore
+from app_update_checker import APP_VERSION, fetch_latest_release, is_newer_version
 from map_updater import (
     download_and_install,
     fetch_manifest,
@@ -129,6 +131,7 @@ DEFAULT_CONFIG = {
     "map_match_hold_seconds": 2.0,
     "ui_language": None,
     "ocr_backend": "paddle",
+    "ignored_app_update_version": None,
 }
 
 
@@ -268,6 +271,36 @@ WAITING_TEXTS = {
     "KR": "(대기 중)",
     "JP": "(待機中)",
     "EN": "(Waiting)",
+}
+
+VERSION_LABELS = {
+    "KR": f"v{APP_VERSION} 정식 릴리스",
+    "JP": f"v{APP_VERSION} 正式リリース",
+    "EN": f"v{APP_VERSION} Stable Release",
+}
+
+APP_UPDATE_DIALOGS = {
+    "KR": {
+        "title": "GODIMAP 업데이트",
+        "message": "GODIMAP 프로그램의 새 버전({version})이 있습니다.\n다운로드하러 가시겠습니까?",
+        "yes": "예",
+        "no": "아니오",
+        "skip": "다음 업데이트까지 알리지 않음",
+    },
+    "JP": {
+        "title": "GODIMAPアップデート",
+        "message": "GODIMAPの新しいバージョン（{version}）があります。\nダウンロードページを開きますか？",
+        "yes": "はい",
+        "no": "いいえ",
+        "skip": "次のアップデートまで通知しない",
+    },
+    "EN": {
+        "title": "GODIMAP Update",
+        "message": "A new version of GODIMAP ({version}) is available.\nWould you like to open the download page?",
+        "yes": "Yes",
+        "no": "No",
+        "skip": "Don't notify until the next update",
+    },
 }
 
 
@@ -522,6 +555,8 @@ class GodimapOcrDebug:
         self.update_banner_values = {}
         self.update_banner_until = 0.0
         self.update_progress_percent = 0
+        self.app_update_future = None
+        self.app_update_dialog = None
         self.marker_visible = True
         self.last_marker_blink_at = time.monotonic()
         self.capture_bbox = None
@@ -541,6 +576,7 @@ class GodimapOcrDebug:
         self.map_drag_origin = None
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-ocr")
         self.update_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-map-update")
+        self.app_update_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-app-update")
         self.ocr_backend_name = os.environ.get(
             "GODIMAP_OCR_BACKEND", self.config.get("ocr_backend", "paddle")
         ).lower()
@@ -590,6 +626,14 @@ class GodimapOcrDebug:
         header = tk.Frame(self.root, bg="#15191f")
         header.pack(fill="x", padx=12, pady=(10, 4))
         tk.Label(header, text="GODIMAP", fg="#55c7f3", bg="#15191f", font=("Segoe UI", 11, "bold")).pack(side="left")
+        self.version_label = tk.Label(
+            header,
+            text=VERSION_LABELS[self.ui_language],
+            fg="#8f9ba8",
+            bg="#15191f",
+            font=("Segoe UI", 8),
+        )
+        self.version_label.pack(side="left", padx=(7, 0), pady=(3, 0))
         tk.Button(header, text="EXIT", command=self.quit, bg="#3b4652", fg="white", relief="flat", padx=12).pack(side="right")
         tk.Button(header, text="HELP", command=self.show_help, bg="#3b4652", fg="white", relief="flat", padx=12).pack(side="right", padx=(0, 6))
         self.locale_button = tk.Button(
@@ -716,7 +760,77 @@ class GodimapOcrDebug:
         self.drag_bbox = None
         if self.map_updates_enabled:
             self.root.after(800, self.start_update_check)
+            self.root.after(1600, self.start_app_update_check)
         self.root.after(50, self.tick)
+
+    def start_app_update_check(self):
+        if self.closed or self.app_update_future is not None:
+            return
+        self.app_update_future = self.app_update_executor.submit(fetch_latest_release)
+
+    def finish_app_update_check(self):
+        future = self.app_update_future
+        self.app_update_future = None
+        try:
+            release = future.result()
+        except Exception:
+            # Version checking must never interrupt normal program startup.
+            return
+        version = release["version"]
+        if not is_newer_version(version):
+            return
+        if self.config.get("ignored_app_update_version") == version:
+            return
+        self.show_app_update_dialog(release)
+
+    def show_app_update_dialog(self, release):
+        if self.app_update_dialog and self.app_update_dialog.winfo_exists():
+            return
+        texts = APP_UPDATE_DIALOGS[self.ui_language]
+        window = tk.Toplevel(self.root)
+        self.app_update_dialog = window
+        window.title(texts["title"])
+        window.configure(bg="#15191f")
+        window.resizable(False, False)
+        window.transient(self.root)
+        window.grab_set()
+        if self.window_icon is not None:
+            window.iconphoto(True, self.window_icon)
+        tk.Label(
+            window,
+            text=texts["message"].format(version=release["version"]),
+            justify="left",
+            fg="white",
+            bg="#15191f",
+            font=("Segoe UI", 10),
+            padx=20,
+            pady=18,
+        ).pack(fill="x")
+        buttons = tk.Frame(window, bg="#15191f")
+        buttons.pack(fill="x", padx=14, pady=(0, 14))
+
+        def close():
+            window.grab_release()
+            window.destroy()
+            self.app_update_dialog = None
+
+        def open_release():
+            close()
+            webbrowser.open(release["url"], new=2)
+
+        def ignore_version():
+            self.config["ignored_app_update_version"] = release["version"]
+            save_config(self.config)
+            close()
+
+        tk.Button(buttons, text=texts["yes"], command=open_release, width=10).pack(side="left", padx=3)
+        tk.Button(buttons, text=texts["no"], command=close, width=10).pack(side="left", padx=3)
+        tk.Button(buttons, text=texts["skip"], command=ignore_version).pack(side="left", padx=3)
+        window.protocol("WM_DELETE_WINDOW", close)
+        window.update_idletasks()
+        x = self.root.winfo_rootx() + max(0, (self.root.winfo_width() - window.winfo_reqwidth()) // 2)
+        y = self.root.winfo_rooty() + max(0, (self.root.winfo_height() - window.winfo_reqheight()) // 2)
+        window.geometry(f"+{x}+{y}")
 
     def start_update_check(self):
         if self.closed or self.update_future is not None:
@@ -836,6 +950,7 @@ class GodimapOcrDebug:
         self.config["ui_language"] = self.ui_language
         save_config(self.config)
         self.locale_button.configure(text=self.ui_language)
+        self.version_label.configure(text=VERSION_LABELS[self.ui_language])
         for key, label in self.section_labels.items():
             label.configure(text=SECTION_LABELS[self.ui_language][key])
         for label in self.ocr_result_labels.values():
@@ -1844,6 +1959,8 @@ class GodimapOcrDebug:
         now = time.monotonic()
         if self.update_future is not None and self.update_future.done():
             self.finish_update_task()
+        if self.app_update_future is not None and self.app_update_future.done():
+            self.finish_app_update_check()
         if self.update_banner_state == "downloading":
             displayed_percent = self.update_banner_values.get("percent", -1)
             if displayed_percent != self.update_progress_percent:
@@ -1895,6 +2012,7 @@ class GodimapOcrDebug:
         save_config(self.config)
         self.executor.shutdown(wait=False, cancel_futures=True)
         self.update_executor.shutdown(wait=False, cancel_futures=True)
+        self.app_update_executor.shutdown(wait=False, cancel_futures=True)
         if self.desktop_camera is not None:
             try:
                 self.desktop_camera.release()
