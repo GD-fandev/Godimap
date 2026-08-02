@@ -233,6 +233,7 @@ Python 3.12環境で依存パッケージをインストールした後、`tools
 - ゲーム関連素材、地図画像、アイコン等はMIT Licenseの対象外です。詳細は[Asset Notice](licenses/ASSET_NOTICE.txt)をご確認ください。
 - ダンジョン地図画像の出典：[Godius公式ホームページ](https://www.godius.co.kr/guide_8?t_id=2)
 - 町の地図画像の出典：[Godius Online Forum](http://godius.s201.xrea.com/mmain.html)
+- フィールド地図画像の出典：[フィールドマップ](https://www3.hp-ez.com/hp/chombo/field)
 - 第三者ソフトウェアとOCRモデルについては[Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt)と`licenses/third_party`をご確認ください。
 - GODIMAPは非公式ツールです。ゲーム運営方針および素材提供元の規約に従い、各自の判断でご利用ください。
 
@@ -433,6 +434,7 @@ Python 3.12 환경에 의존 패키지를 설치한 다음 `tools/build_godimap.
 - 게임 관련 소재, 지도 이미지 및 아이콘 등은 MIT License 대상이 아닙니다. 자세한 내용은 [Asset Notice](licenses/ASSET_NOTICE.txt)를 확인하십시오.
 - 던전 지도 이미지 출처: [가디우스 공식 홈페이지](https://www.godius.co.kr/guide_8?t_id=2)
 - 마을 지도 이미지 출처: [가디우스 온라인 포럼](http://godius.s201.xrea.com/mmain.html)
+- 필드 지도 이미지 출처: [필드맵](https://www3.hp-ez.com/hp/chombo/field)
 - 제3자 소프트웨어와 OCR 모델은 [Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt) 및 `licenses/third_party`를 확인하십시오.
 - GODIMAP은 비공식 도구입니다. 게임 운영 정책과 소재 제공자의 규정을 준수하고 각자의 판단에 따라 사용하십시오.
 
@@ -633,6 +635,7 @@ Detailed surveying-tool instructions are provided separately to designated adven
 - Game-related assets, map images, and icons are not automatically covered by the MIT License. See the [Asset Notice](licenses/ASSET_NOTICE.txt).
 - Dungeon map image source: [Official Godius website](https://www.godius.co.kr/guide_8?t_id=2)
 - Town map image source: [Godius Online Forum](http://godius.s201.xrea.com/mmain.html)
+- Field map image source: [Field maps](https://www3.hp-ez.com/hp/chombo/field)
 - See [Third-Party Notices](licenses/THIRD_PARTY_NOTICES.txt) and `licenses/third_party` for third-party software and OCR-model terms.
 - GODIMAP is an unofficial tool. Follow the game operator's policies and the terms of each asset provider, and use it at your own discretion.
 
