@@ -1,0 +1,19 @@
+{
+  "id": "goldred",
+  "names": {
+    "ko": [
+      "골드레드반도"
+    ],
+    "ja": [
+      "ゴールドレッド半島"
+    ],
+    "en": []
+  },
+  "image": "maps/field/goldred.jpg",
+  "imageSize": {
+    "width": 1920,
+    "height": 960
+  },
+  "controlPoints": [],
+  "transform": null
+}
