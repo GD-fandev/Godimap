@@ -6,11 +6,13 @@ import re
 import sys
 import time
 import tkinter as tk
+import traceback
 import unicodedata
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from ctypes import wintypes
 from pathlib import Path
-from tkinter import ttk
+from tkinter import messagebox, ttk
 
 import dxcam
 from PIL import Image, ImageDraw, ImageEnhance, ImageGrab, ImageOps, ImageTk
@@ -36,6 +38,7 @@ else:
 
 LOCAL_APPDATA = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
 CONFIG_PATH = LOCAL_APPDATA / "Godimap" / "godimap-config.json"
+UPDATE_ERROR_LOG_PATH = LOCAL_APPDATA / "Godimap" / "update-error.log"
 MAP_STORE = MapStore(RESOURCE_DIR)
 
 PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
@@ -165,6 +168,22 @@ def save_config(config):
     CONFIG_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def write_update_error_log(error):
+    try:
+        UPDATE_ERROR_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        detail = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+        UPDATE_ERROR_LOG_PATH.write_text(
+            f"Time: {datetime.now().astimezone().isoformat()}\n"
+            f"Type: {type(error).__name__}\n"
+            f"Error: {error}\n\n"
+            f"{detail}",
+            encoding="utf-8",
+        )
+        return True
+    except Exception:
+        return False
+
+
 def contributors_for_map(map_record):
     if not isinstance(map_record, dict):
         return []
@@ -227,6 +246,21 @@ UPDATE_TEXTS = {
         "KR": "맵 업데이트에 실패했습니다. 다시 시도하려면 여기를 눌러주세요.",
         "JP": "マップ更新に失敗しました。再試行するにはここをクリックしてください。",
         "EN": "Map update failed. Click here to try again.",
+    },
+}
+
+UPDATE_ERROR_DIALOGS = {
+    "KR": {
+        "title": "맵 업데이트 실패",
+        "message": "맵 업데이트를 완료하지 못했습니다.\n\n{error}\n\n오류 로그: %LOCALAPPDATA%\\Godimap\\update-error.log",
+    },
+    "JP": {
+        "title": "マップ更新失敗",
+        "message": "マップ更新を完了できませんでした。\n\n{error}\n\nエラーログ: %LOCALAPPDATA%\\Godimap\\update-error.log",
+    },
+    "EN": {
+        "title": "Map update failed",
+        "message": "The map update could not be completed.\n\n{error}\n\nError log: %LOCALAPPDATA%\\Godimap\\update-error.log",
     },
 }
 
@@ -740,9 +774,16 @@ class GodimapOcrDebug:
         self.update_task = None
         try:
             result = future.result()
-        except Exception:
+        except Exception as exc:
             if task == "install":
+                write_update_error_log(exc)
                 self.show_update_banner("failed")
+                dialog = UPDATE_ERROR_DIALOGS[self.ui_language]
+                messagebox.showerror(
+                    dialog["title"],
+                    dialog["message"].format(error=f"{type(exc).__name__}: {exc}"),
+                    parent=self.root,
+                )
             return
         if task == "check":
             self.update_manifest = result

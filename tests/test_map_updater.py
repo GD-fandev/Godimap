@@ -80,6 +80,29 @@ class MapUpdaterTests(unittest.TestCase):
         with self.assertRaises(map_updater.UpdateError):
             map_updater._extract_and_validate(bad_archive, self.temp_dir / "content")
 
+    def test_download_retries_and_removes_partial_file(self):
+        destination = self.temp_dir / "retry.zip"
+        attempts = []
+
+        def flaky_download(_manifest, path, progress_callback=None):
+            attempts.append(1)
+            Path(path).write_bytes(b"partial")
+            if len(attempts) < 3:
+                raise OSError("simulated network interruption")
+            Path(path).write_bytes(b"complete")
+
+        with mock.patch.object(map_updater, "_download_once", flaky_download), mock.patch.object(
+            map_updater.time, "sleep", return_value=None
+        ):
+            map_updater._download(self.manifest, destination)
+        self.assertEqual(len(attempts), 3)
+        self.assertEqual(destination.read_bytes(), b"complete")
+
+    def test_tls_context_uses_bundled_certifi_ca(self):
+        with mock.patch.object(map_updater.ssl, "create_default_context") as create_context:
+            map_updater._tls_context()
+        create_context.assert_called_once_with(cafile=map_updater.certifi.where())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,11 +3,15 @@ import json
 import os
 import re
 import shutil
+import ssl
 import tempfile
+import time
 import urllib.request
 import uuid
 import zipfile
 from pathlib import Path, PurePosixPath
+
+import certifi
 
 
 MANIFEST_URL = (
@@ -19,10 +23,22 @@ MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
 MAX_EXTRACTED_BYTES = 1024 * 1024 * 1024
 MAX_ARCHIVE_ENTRIES = 20000
 USER_AGENT = "GODIMAP-MapUpdater/1.0"
+REQUEST_TIMEOUT_SECONDS = 60
+DOWNLOAD_ATTEMPTS = 3
 
 
 class UpdateError(RuntimeError):
     pass
+
+
+def _tls_context():
+    # Frozen builds must not depend on the target PC's Python/OpenSSL CA path.
+    # PyInstaller bundles certifi's CA file with GODIMAP.
+    return ssl.create_default_context(cafile=certifi.where())
+
+
+def _open_url(request, timeout):
+    return urllib.request.urlopen(request, timeout=timeout, context=_tls_context())
 
 
 def version_key(value):
@@ -64,12 +80,12 @@ def validate_manifest(payload):
     }
 
 
-def fetch_manifest(timeout=5):
+def fetch_manifest(timeout=15):
     request = urllib.request.Request(
         MANIFEST_URL,
         headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    with _open_url(request, timeout=timeout) as response:
         raw = response.read(131073)
     if len(raw) > 131072:
         raise UpdateError("The update manifest is too large.")
@@ -80,14 +96,14 @@ def update_is_available(local_version, manifest):
     return version_key(manifest["version"]) > version_key(local_version)
 
 
-def _download(manifest, destination, progress_callback=None):
+def _download_once(manifest, destination, progress_callback=None):
     request = urllib.request.Request(
         manifest["asset_url"],
         headers={"User-Agent": USER_AGENT, "Accept": "application/octet-stream"},
     )
     digest = hashlib.sha256()
     downloaded = 0
-    with urllib.request.urlopen(request, timeout=20) as response, Path(destination).open("wb") as output:
+    with _open_url(request, timeout=REQUEST_TIMEOUT_SECONDS) as response, Path(destination).open("wb") as output:
         content_length = response.headers.get("Content-Length")
         if content_length and int(content_length) > MAX_ARCHIVE_BYTES:
             raise UpdateError("The update archive is too large.")
@@ -106,6 +122,27 @@ def _download(manifest, destination, progress_callback=None):
         raise UpdateError("The downloaded file size does not match the manifest.")
     if digest.hexdigest().lower() != manifest["sha256"]:
         raise UpdateError("The downloaded file checksum does not match the manifest.")
+
+
+def _download(manifest, destination, progress_callback=None):
+    destination = Path(destination)
+    last_error = None
+    for attempt in range(1, DOWNLOAD_ATTEMPTS + 1):
+        try:
+            _download_once(manifest, destination, progress_callback)
+            return
+        except Exception as exc:
+            last_error = exc
+            try:
+                destination.unlink(missing_ok=True)
+            except Exception:
+                pass
+            if attempt < DOWNLOAD_ATTEMPTS:
+                time.sleep(1.5)
+    raise UpdateError(
+        f"Map ZIP download failed after {DOWNLOAD_ATTEMPTS} attempts: "
+        f"{type(last_error).__name__}: {last_error}"
+    ) from last_error
 
 
 def _safe_member_path(name):
