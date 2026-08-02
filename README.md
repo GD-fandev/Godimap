@@ -241,7 +241,6 @@ Python 3.12環境で依存パッケージをインストールした後、`tools
 ## 今後の追加予定
 
 - すべての町のマップに、商店およびギルドの表示を追加
-- --フィールド進入時の道しるべガイドを追加（座標および大まかな方向を案内）--
 - 日本語の表記名は、今後公式表記に合わせて修正される可能性があります
 
 [目次へ戻る](#contents)
@@ -442,7 +441,6 @@ Python 3.12 환경에 의존 패키지를 설치한 다음 `tools/build_godimap.
 ## 향후 추가 예정
 
 - 모든 마을 지도에 상점 및 길드 표시 추가
-- --필드 진입 시 이정표 가이드 추가(좌표 및 대략적인 방향 안내)--
 - 일본어 표기명은 추후 공식 표기에 맞춰 수정될 수 있습니다
 
 [목차로 돌아가기](#contents)
@@ -643,7 +641,6 @@ Detailed surveying-tool instructions are provided separately to designated adven
 ## Planned additions
 
 - Shop and guild markers on every town map
-- --A signpost guide when entering a field, showing coordinates and an approximate direction--
 - Japanese display names may be revised later to match future official terminology
 
 [Back to contents](#contents)
