@@ -67,5 +67,9 @@
     },
     "rmsePixels": 1.1110320815536467,
     "maxErrorPixels": 1.864005548323201
+  },
+  "worldMapPosition": {
+    "x": 451,
+    "y": 347
   }
 }
