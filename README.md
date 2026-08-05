@@ -46,12 +46,14 @@ GODIMAPは、Godiusのゲーム画面に表示される地域名と現在座標�
 
 ゲームクライアントの改変、通信解析、自動操作、マクロ操作は行いません。
 
-**[GODIMAP本体（GODIMAP.exe同梱ZIP）の現在のリリース](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
+**[GODIMAP本体（GODIMAP.exe同梱ZIP）の現在のリリース](https://github.com/GD-fandev/Godimap/releases#release-v1.1.0)**
 
 - 韓国語・日本語・英語の地域名OCR
 - 地域に対応するミニマップの自動表示
 - ゲーム内座標 `X:Y` の読み取りと現在位置の点滅表示
 - ミニマップの位置・倍率・不透明度調整
+- ワールドマップと現在地域の表示
+- 移動コマンドのお気に入り登録・クリップボードへのコピー（韓国語・日本語）
 - 未登録地域および位置情報未登録地域の案内
 - OCR結果と動作状態の確認
 - GitHubからのマップ画像・マップ情報更新
@@ -73,12 +75,15 @@ GODIMAPには、まだ測量が完了していない未調査地域がありま�
 
 - カールマーニュ洞窟 1F
 - 中部背骨洞窟 1F
-- 東部背骨洞窟 1~5F
-- 西部背骨洞窟 1~5F
-- レゲ/カリ地下洞窟 9~10F
-- シャドミュム洞窟 3~6F
+- 西部背骨洞窟 4~5F
+- シャドミュム洞窟 5~6F
 - エブリン・エチリン洞窟 1~5F
 - ヘル 1F~10F
+
+### 調査にご協力してくださった冒険者様（Special Thanks）
+
+- レゲ地下洞窟 9~10F：狐　様
+- シャドミュム洞窟 3~4F：狐　様
 
 これらの地域は入場条件のため制作者自身での調査が難しく、現時点では多くの地図が未完成となっています。十分な状態でお届けできず申し訳ありませんが、いつか自分で調査するか、有志の方のお力を借りながら、少しずつ完成させていきたいと考えています。
 
@@ -127,23 +132,20 @@ GODIMAPは起動時に公式GitHubリポジトリへ接続し、マップ画像�
 - `OCR`：実際に読み取っている地域名・座標範囲
 - `認識された内容`：`KR`、`JP`、`EN`別の認識結果と`X:Y`
 - `状態`：現在の動作状況と更新案内
+- `お気に入り`：移動コマンドの登録、表示、位置編集
 - `KR / JP / EN`ボタン：表示言語を順番に切り替え
 - `HELP`：現在選択中の言語で操作説明を表示
 
 `invalid`は他言語の誤認識を除外した状態、`(No data)`は認識できる文字がない状態です。初回の表示言語はWindowsの言語に合わせて選択され、以後は保存されます。
 
-### 地域名OCR範囲
+### OCR範囲
 
-GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で、<kbd>F11</kbd> キーを押します。
+GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で、<kbd>Shift</kbd> + <kbd>F11</kbd> を押します。赤と黄色の範囲を同時に編集できます。
 
-1. 赤い半透明ボックスをドラッグして地域名へ移動します。
-2. 右下のハンドルをドラッグしてサイズを調整します。
-3. 地域名全体だけが十分な余白とともに入るようにします。
-4. もう一度 <kbd>F11</kbd> を押して確定します。
-
-### 座標OCR範囲
-
-<kbd>Shift</kbd> + <kbd>F11</kbd> を押し、黄色い半透明ボックスをゲーム内の`X:Y`へ合わせます。移動と右下ハンドルによるサイズ調整後、同じキーをもう一度押して確定します。
+1. 赤い半透明ボックスをゲーム内の地域名へ合わせます。
+2. 黄色い半透明ボックスをゲーム内の`X:Y`へ合わせます。
+3. 各ボックスはドラッグで移動し、右下のハンドルでサイズを調整します。
+4. もう一度 <kbd>Shift</kbd> + <kbd>F11</kbd> を押して確定します。
 
 ### ミニマップと現在位置
 
@@ -163,6 +165,22 @@ GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で�
 
 編集モードを終了するとミニマップはクリックを受け取らず、背後のゲームUIをそのまま操作できます。位置、倍率、不透明度は自動保存されます。
 
+<kbd>F11</kbd> でワールドマップを表示／非表示にできます。ワールドマップ表示中に <kbd>Ctrl</kbd> + <kbd>F11</kbd> を押すと、ワールドマップの位置、サイズ、不透明度を調整できます。
+
+### お気に入り移動コマンド
+
+GODIMAP下部の`お気に入り`から、移動先を最大5件まで登録できます。登録画面では、マップ一覧の絞り込み、移動先名、オーバーレイに表示する文字を編集できます。
+
+韓国語または日本語で新しく登録すると、同じマップJSONに登録されたもう一方の言語名も同時に仮登録されます。その後の名前と表示文字の変更は、現在選択中の言語だけに反映されます。登録順、削除、オーバーレイ位置は韓国語と日本語で共通です。
+
+- `表示／非表示`：ゲーム画面上のお気に入りボタンを表示または非表示
+- `編集／完了`：表示中のお気に入りオーバーレイをドラッグして移動
+- お気に入りボタンをクリック：`/MOVE マップ名`をクリップボードへコピー
+
+コピー後はボタンに一時的に`Copied!`と表示されます。ゲーム内チャット欄へご自身で貼り付けて使用してください。本機能は文字列のコピーだけを行い、自動入力、Enterキーの送信、移動コマンドの自動実行は行いません。実際にポータル移動を行うためには、専用アイテムが必要です。
+
+英語名で登録されたマップ名情報が不足しているため、英語環境ではお気に入り機能を利用できません。
+
 <a id="ja-settings"></a>
 
 ## 設定・トラブルシューティング
@@ -173,7 +191,7 @@ GodiusまたはGODIMAPの対象ウィンドウが選択されている状態で�
 %LOCALAPPDATA%\Godimap\godimap-config.json
 ```
 
-表示言語、OCR範囲、ウィンドウ位置、ミニマップ位置・倍率・不透明度が保存されます。完全に初期化する場合はGODIMAP終了後にこのファイルをバックアップしてから移動または削除してください。
+表示言語、OCR範囲、ウィンドウ位置、ミニマップとワールドマップの設定、お気に入り情報が保存されます。完全に初期化する場合はGODIMAP終了後にこのファイルをバックアップしてから移動または削除してください。
 
 ### Godius Clientが見つからない
 
@@ -259,12 +277,14 @@ GODIMAP은 Godius 게임 화면에 표시되는 지역명과 현재 좌표를 OC
 
 게임 클라이언트 변조, 통신 분석, 자동 조작 및 매크로 기능은 사용하지 않습니다.
 
-**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 현재 릴리스](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
+**[GODIMAP 본품(GODIMAP.exe 포함 ZIP) 현재 릴리스](https://github.com/GD-fandev/Godimap/releases#release-v1.1.0)**
 
 - 한국어·일본어·영어 지역명 OCR
 - 지역에 맞는 미니맵 자동 표시
 - 게임 좌표 `X:Y` 인식과 현재 위치 점멸 표시
 - 미니맵 위치·배율·불투명도 조절
+- 월드맵과 현재 지역 표시
+- 이동 명령어 즐겨찾기 등록 및 클립보드 복사(한국어·일본어)
 - 미등록 지역과 좌표 데이터가 없는 지역 안내
 - OCR 결과 및 동작 상태 확인
 - GitHub를 통한 지도 이미지·정보 업데이트
@@ -327,23 +347,20 @@ GODIMAP은 실행 시 공식 GitHub 저장소에 접속하여 지도 이미지�
 - `OCR`: 실제로 읽고 있는 지역명·좌표 화면
 - `인식된 내용`: `KR`, `JP`, `EN`별 결과와 `X:Y`
 - `상태`: 현재 동작 상태와 업데이트 안내
+- `즐겨찾기`: 이동 명령어 등록·표시·위치 편집
 - `KR / JP / EN` 버튼: 표시 언어를 순서대로 변경
 - `HELP`: 현재 선택된 언어로 사용법 표시
 
 `invalid`는 다른 언어의 잘못된 판독을 제외한 상태이고 `(No data)`는 인식할 문자가 없는 상태입니다. 첫 실행 언어는 Windows 표시 언어에 맞춰지며 이후 저장됩니다.
 
-### 지역명 OCR 영역
+### OCR 영역
 
-Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>F11</kbd> 키를 누릅니다.
+Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>Shift</kbd> + <kbd>F11</kbd>을 누르면 붉은 영역과 노란 영역을 동시에 편집할 수 있습니다.
 
-1. 붉은 반투명 상자를 드래그하여 지역명 위치로 옮깁니다.
-2. 오른쪽 아래 핸들을 드래그하여 크기를 조절합니다.
-3. 지역명 전체만 여유 있게 들어오도록 맞춥니다.
-4. <kbd>F11</kbd> 키를 다시 눌러 확정합니다.
-
-### 좌표 OCR 영역
-
-<kbd>Shift</kbd> + <kbd>F11</kbd>을 눌러 노란 반투명 상자를 게임의 `X:Y`에 맞춥니다. 위치와 우측 하단 핸들 크기를 조절한 후 같은 키를 다시 눌러 확정합니다.
+1. 붉은 반투명 상자를 게임 내 지역명에 맞춥니다.
+2. 노란 반투명 상자를 게임 내 `X:Y`에 맞춥니다.
+3. 각 상자는 드래그로 이동하고 오른쪽 아래 핸들로 크기를 조절합니다.
+4. <kbd>Shift</kbd> + <kbd>F11</kbd>을 다시 눌러 확정합니다.
 
 ### 미니맵과 현재 위치
 
@@ -363,6 +380,22 @@ Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>F11</kbd> 키를
 
 편집 모드를 끄면 미니맵이 클릭을 받지 않으므로 뒤에 있는 게임 UI를 그대로 조작할 수 있습니다. 위치, 배율 및 불투명도는 자동 저장됩니다.
 
+<kbd>F11</kbd>로 월드맵을 표시하거나 숨길 수 있습니다. 월드맵이 표시된 상태에서 <kbd>Ctrl</kbd> + <kbd>F11</kbd>을 누르면 월드맵의 위치, 크기 및 불투명도를 조절할 수 있습니다.
+
+### 이동 명령어 즐겨찾기
+
+GODIMAP 하단의 `즐겨찾기`에서 이동할 장소를 최대 5개까지 등록할 수 있습니다. 등록 화면에서는 맵 목록 실시간 검색, 이동할 맵 이름 및 오버레이에 표시할 글자를 수정할 수 있습니다.
+
+한국어 또는 일본어에서 새로 등록하면 같은 맵 JSON에 등록된 반대쪽 언어 이름도 함께 임시 등록됩니다. 이후 이름과 표시 글자 수정은 현재 선택한 언어에만 반영됩니다. 등록 순서, 삭제 및 오버레이 위치는 한국어와 일본어가 공유합니다.
+
+- `표시/비표시`: 게임 화면의 즐겨찾기 버튼 표시 전환
+- `편집/완료`: 표시된 즐겨찾기 오버레이를 드래그하여 이동
+- 즐겨찾기 버튼 클릭: `/이동 맵이름`을 클립보드에 복사
+
+복사가 완료되면 버튼에 잠시 `Copied!`가 표시됩니다. 이후 게임 채팅 입력창에 사용자가 직접 붙여넣으면 됩니다. 이 기능은 문자열 복사만 수행하며 게임 자동 입력, Enter 자동 전송 및 이동 명령어 자동 실행은 하지 않습니다. 실제로 포탈 이동을 이용하려면 전용 아이템이 필요합니다.
+
+현재 영어 이름으로 등록된 맵 이름 정보가 부족하여 EN 환경에서는 즐겨찾기 기능을 사용할 수 없습니다.
+
 <a id="ko-settings"></a>
 
 ## 설정·문제 해결
@@ -373,7 +406,7 @@ Godius 또는 GODIMAP 대상 창이 선택된 상태에서 <kbd>F11</kbd> 키를
 %LOCALAPPDATA%\Godimap\godimap-config.json
 ```
 
-표시 언어, OCR 영역, 창 위치, 미니맵 위치·배율·불투명도가 저장됩니다. 완전히 초기화하려면 GODIMAP을 종료한 후 이 파일을 백업하고 이동하거나 삭제하십시오.
+표시 언어, OCR 영역, 창 위치, 미니맵과 월드맵 설정 및 즐겨찾기 정보가 저장됩니다. 완전히 초기화하려면 GODIMAP을 종료한 후 이 파일을 백업하고 이동하거나 삭제하십시오.
 
 ### Godius Client를 찾지 못하는 경우
 
@@ -459,12 +492,13 @@ GODIMAP is an information-only overlay that reads the region name and current co
 
 It does not modify the game client, analyze network traffic, automate gameplay, or provide macro functions.
 
-**[Current GODIMAP release (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases#release-v1.0.0)**
+**[Current GODIMAP release (ZIP containing GODIMAP.exe)](https://github.com/GD-fandev/Godimap/releases#release-v1.1.0)**
 
 - Korean, Japanese, and English region-name OCR
 - Automatic minimap selection
 - In-game `X:Y` coordinate recognition and blinking position marker
 - Adjustable minimap position, scale, and opacity
+- World map with the current region indicator
 - Notices for unmapped regions and maps without location calibration
 - OCR and runtime status display
 - Map image and metadata updates from GitHub
@@ -532,18 +566,14 @@ This version check may send ordinary connection information, such as your IP add
 
 `invalid` means that an unreliable result from another language was filtered out. `(No data)` means that no readable text was found. The initial interface language follows Windows and is saved afterward.
 
-### Region-name OCR area
+### OCR regions
 
-With Godius or a relevant GODIMAP window selected, press <kbd>F11</kbd>.
+With Godius or a relevant GODIMAP window selected, press <kbd>Shift</kbd> + <kbd>F11</kbd> to edit the red and yellow regions together.
 
-1. Drag the translucent red box over the region name.
-2. Drag its lower-right handle to resize it.
-3. Include the full region name with a small margin and as little unrelated UI as possible.
-4. Press <kbd>F11</kbd> again to confirm.
-
-### Coordinate OCR area
-
-Press <kbd>Shift</kbd> + <kbd>F11</kbd> and place the translucent yellow box over the in-game `X:Y` display. Move and resize it with the lower-right handle, then press the same shortcut again to confirm.
+1. Place the translucent red box over the in-game region name.
+2. Place the translucent yellow box over the in-game `X:Y` display.
+3. Drag either box to move it and use its lower-right handle to resize it.
+4. Press <kbd>Shift</kbd> + <kbd>F11</kbd> again to confirm.
 
 ### Minimap and current position
 
@@ -563,6 +593,8 @@ Press <kbd>Ctrl</kbd> + <kbd>F11</kbd> to enter or leave edit mode.
 
 Outside edit mode, the minimap ignores mouse input so that you can click the game UI behind it. Position, scale, and opacity are saved automatically.
 
+Press <kbd>F11</kbd> to show or hide the world map. While it is displayed, press <kbd>Ctrl</kbd> + <kbd>F11</kbd> to adjust the world map's position, size, and opacity.
+
 <a id="en-settings"></a>
 
 ## Settings and troubleshooting
@@ -573,7 +605,7 @@ Personal settings are stored at:
 %LOCALAPPDATA%\Godimap\godimap-config.json
 ```
 
-This file stores the interface language, OCR regions, window position, and minimap position, scale, and opacity. To reset everything, close GODIMAP, back up the file, and then move or delete it.
+This file stores the interface language, OCR regions, window position, and minimap/world-map settings. To reset everything, close GODIMAP, back up the file, and then move or delete it.
 
 ### Godius Client is not found
 

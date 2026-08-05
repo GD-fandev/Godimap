@@ -64,6 +64,7 @@ SWP_SHOWWINDOW = 0x0040
 VK_F11 = 0x7A
 VK_SHIFT = 0x10
 VK_CONTROL = 0x11
+VK_MENU = 0x12
 
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
@@ -127,11 +128,17 @@ DEFAULT_CONFIG = {
     "map_offset_y": None,
     "map_size_scale": 1.0,
     "map_opacity_percent": 100,
+    "world_map_size_scale": 1.0,
+    "world_map_opacity_percent": 100,
     "ocr_interval_ms": 700,
     "map_match_hold_seconds": 2.0,
     "ui_language": None,
     "ocr_backend": "paddle",
     "ignored_app_update_version": None,
+    "favorites": {"KR": [], "JP": []},
+    "favorite_overlay_visible": False,
+    "favorite_overlay_offset_x": None,
+    "favorite_overlay_offset_y": None,
 }
 
 
@@ -207,7 +214,7 @@ STATUS_TEXTS = {
     "opacity": {"KR": "미니맵 불투명도 {percent}%", "JP": "ミニマップ不透明度 {percent}%", "EN": "Minimap opacity {percent}%"},
     "size": {"KR": "미니맵 크기 {percent}% · 꼭짓점을 놓으면 저장", "JP": "ミニマップサイズ {percent}%・ハンドルを離すと保存", "EN": "Minimap size {percent}% · Release the handle to save"},
     "target_missing": {"KR": "Godius Client 창을 찾지 못했습니다.", "JP": "Godius Clientウィンドウが見つかりません。", "EN": "Godius Client window was not found."},
-    "need_name_region": {"KR": "F11을 눌러 맵 이름 영역을 먼저 저장해 주세요.", "JP": "F11を押して、先にマップ名の範囲を保存してください。", "EN": "Press F11 and save the map-name region first."},
+    "need_name_region": {"KR": "Shift+F11을 눌러 맵 이름 영역을 저장해 주세요.", "JP": "Shift+F11を押して、マップ名の範囲を保存してください。", "EN": "Press Shift+F11 and save the map-name region."},
     "need_coordinate_region": {"KR": "Shift+F11을 눌러 좌표 영역을 저장해 주세요.", "JP": "Shift+F11を押して、座標範囲を保存してください。", "EN": "Press Shift+F11 and save the coordinate region."},
     "debug_overlap": {"KR": "GODIMAP 창이 OCR 영역을 가림 · 창을 옮겨 주세요", "JP": "GODIMAPウィンドウがOCR範囲を覆っています・ウィンドウを移動してください", "EN": "The GODIMAP window overlaps the OCR region · Move the window"},
     "map_overlap": {"KR": "미니맵이 OCR 영역을 가림 · 수정 모드에서 옮겨 주세요", "JP": "ミニマップがOCR範囲を覆っています・編集モードで移動してください", "EN": "The minimap overlaps the OCR region · Move it in edit mode"},
@@ -221,12 +228,55 @@ STATUS_TEXTS = {
     "finding_map": {"KR": "저장된 맵 이름을 찾는 중", "JP": "保存済みのマップ名を検索中", "EN": "Searching saved map names"},
     "minimized": {"KR": "Godius가 최소화되어 인식을 일시정지했습니다.", "JP": "Godiusが最小化されたため認識を一時停止しました。", "EN": "Recognition paused because Godius is minimized."},
     "other_foreground": {"KR": "다른 창이 전면이라 캡처 일시정지 · 마지막 정상 상태 유지", "JP": "別のウィンドウが前面のためキャプチャーを一時停止・最後の正常状態を維持", "EN": "Capture paused while another window is in front · Keeping the last valid state"},
+    "world_map_open": {"KR": "월드맵 표시 중 · F11로 닫기", "JP": "ワールドマップを表示中・F11で閉じる", "EN": "World map displayed · F11 to close"},
+    "world_map_missing": {"KR": "월드맵 이미지를 찾을 수 없습니다: maps/other/worldmap.jpg", "JP": "ワールドマップ画像が見つかりません: maps/other/worldmap.jpg", "EN": "World map image not found: maps/other/worldmap.jpg"},
+    "world_resize_mode": {"KR": "월드맵 조정 중 · 우측 하단 손잡이/마우스 휠 · Ctrl+F11로 완료", "JP": "ワールドマップ調整中・右下ハンドル／マウスホイール・Ctrl+F11で完了", "EN": "Adjusting world map · Bottom-right handle/mouse wheel · Ctrl+F11 to finish"},
+    "world_opacity": {"KR": "월드맵 불투명도 {percent}%", "JP": "ワールドマップ不透明度 {percent}%", "EN": "World map opacity {percent}%"},
+    "world_size": {"KR": "월드맵 크기 {percent}%", "JP": "ワールドマップサイズ {percent}%", "EN": "World map size {percent}%"},
 }
 
 SECTION_LABELS = {
-    "KR": {"ocr": "OCR", "recognized": "인식된 내용", "status": "상태"},
-    "JP": {"ocr": "OCR", "recognized": "認識結果", "status": "状態"},
-    "EN": {"ocr": "OCR", "recognized": "Recognized Content", "status": "Status"},
+    "KR": {"ocr": "OCR", "recognized": "인식된 내용", "status": "상태", "favorites": "즐겨찾기"},
+    "JP": {"ocr": "OCR", "recognized": "認識結果", "status": "状態", "favorites": "お気に入り"},
+    "EN": {"ocr": "OCR", "recognized": "Recognized Content", "status": "Status", "favorites": "Favorites"},
+}
+
+FAVORITE_TEXTS = {
+    "KR": {
+        "register": "등록", "show": "표시", "hide": "비표시", "edit": "편집", "done": "완료",
+        "title": "즐겨찾기 등록", "map_list": "맵 목록", "registered": "등록된 장소",
+        "overlay_label": "오버레이 글자", "destination": "이동할 맵 이름", "command": "복사될 명령어",
+        "add": "등록", "update": "내용 수정", "delete": "삭제", "close": "닫기",
+        "empty": "등록된 장소가 없습니다. 먼저 장소를 등록해주세요.",
+        "show_first": "먼저 오버레이를 켜주세요.", "limit": "즐겨찾기는 최대 5개까지 등록할 수 있습니다.",
+        "select_map": "왼쪽 맵 목록에서 장소를 선택하거나 이동할 맵 이름을 입력해주세요.",
+        "invalid": "영어 환경에서는 즐겨찾기 기능을 사용할 수 없습니다.",
+        "map_name": "맵 이름", "label": "표시", "saved": "즐겨찾기를 저장했습니다.",
+        "search": "맵 이름 검색",
+    },
+    "JP": {
+        "register": "登録", "show": "表示", "hide": "非表示", "edit": "編集", "done": "完了",
+        "title": "お気に入り登録", "map_list": "マップ一覧", "registered": "登録済みの場所",
+        "overlay_label": "オーバーレイ文字", "destination": "移動先のマップ名", "command": "コピーするコマンド",
+        "add": "登録", "update": "内容を変更", "delete": "削除", "close": "閉じる",
+        "empty": "登録された場所がありません。先に場所を登録してください。",
+        "show_first": "先にオーバーレイを表示してください。", "limit": "お気に入りは最大5件まで登録できます。",
+        "select_map": "左のマップ一覧から場所を選ぶか、移動先のマップ名を入力してください。",
+        "invalid": "英語環境ではお気に入り機能を利用できません。",
+        "map_name": "マップ名", "label": "表示", "saved": "お気に入りを保存しました。",
+        "search": "マップ名を検索",
+    },
+    "EN": {
+        "register": "Register", "show": "Show", "hide": "Hide", "edit": "Edit", "done": "Done",
+        "title": "Favorites", "map_list": "Map list", "registered": "Registered places",
+        "overlay_label": "Overlay label", "destination": "Destination map name", "command": "Command to copy",
+        "add": "Register", "update": "Update", "delete": "Delete", "close": "Close",
+        "empty": "No places are registered. Register a place first.", "show_first": "Show the overlay first.",
+        "limit": "Up to five favorites can be registered.", "select_map": "Select a map or enter a destination.",
+        "invalid": "Favorites are unavailable in the English interface.",
+        "map_name": "Map name", "label": "Label", "saved": "Favorites saved.",
+        "search": "Search map names",
+    },
 }
 
 UPDATE_TEXTS = {
@@ -522,10 +572,18 @@ class GodimapOcrDebug:
     def __init__(self):
         self.config = load_config()
         self.ui_language = self.config.get("ui_language", "EN")
+        favorites = self.config.get("favorites")
+        if not isinstance(favorites, dict):
+            favorites = {}
+        self.config["favorites"] = {
+            language: list(favorites.get(language, []))[:5] if isinstance(favorites.get(language, []), list) else []
+            for language in ("KR", "JP")
+        }
         self.current_status_key = "searching"
         self.current_status_values = {}
         self.current_status_color = "#ffd066"
         self.maps = load_map_database()
+        self.synchronize_favorite_locales()
         self.map_database_state = map_database_signature()
         self.active_map = None
         self.pending_map_id = None
@@ -559,7 +617,7 @@ class GodimapOcrDebug:
         self.app_update_dialog = None
         self.marker_visible = True
         self.last_marker_blink_at = time.monotonic()
-        self.capture_bbox = None
+        self.capture_bboxes = {"name": None, "coordinates": None}
         self.stable_client_rect = None
         self.pending_client_rect = None
         self.pending_client_rect_hits = 0
@@ -574,6 +632,16 @@ class GodimapOcrDebug:
         self.opacity_indicator_until = 0.0
         self.map_drag_start = None
         self.map_drag_origin = None
+        self.world_map_mode = False
+        self.world_map_original_image = None
+        self.world_map_photo = None
+        self.world_map_scale = 1.0
+        self.world_map_render_key = None
+        self.favorite_overlay_editing = False
+        self.favorite_drag_start = None
+        self.favorite_drag_origin = None
+        self.favorite_copied_index = None
+        self.favorite_copied_after_id = None
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-ocr")
         self.update_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-map-update")
         self.app_update_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="godimap-app-update")
@@ -744,6 +812,29 @@ class GodimapOcrDebug:
             ),
         )
 
+        add_section_label("favorites")
+        favorite_bar = tk.Frame(self.root, bg="#15191f")
+        favorite_bar.pack(fill="x", padx=12, pady=(4, 10))
+        self.favorite_buttons = {}
+        for key, command in (
+            ("register", self.open_favorite_dialog),
+            ("show", self.toggle_favorite_overlay),
+            ("edit", self.toggle_favorite_edit_mode),
+        ):
+            button = tk.Button(
+                favorite_bar,
+                text=FAVORITE_TEXTS[self.ui_language][key],
+                command=command,
+                bg="#3b4652",
+                fg="white",
+                activebackground="#586675",
+                activeforeground="white",
+                relief="flat",
+                padx=14,
+            )
+            button.pack(side="left", padx=(0, 6))
+            self.favorite_buttons[key] = button
+
         self.root.update_idletasks()
         required_height = self.root.winfo_reqheight() + 8
         fitted_height = min(self.root.winfo_screenheight() - 80, max(debug_height, required_height))
@@ -753,8 +844,12 @@ class GodimapOcrDebug:
 
         self.preview_photo = None
         self.map_photo = None
-        self.region_window = self.create_region_window()
+        self.region_window = self.create_region_window("name")
+        self.coordinate_region_window = self.create_region_window("coordinates")
         self.map_window = self.create_map_window()
+        self.favorite_window = self.create_favorite_overlay()
+        self.refresh_favorite_controls()
+        self.drag_region_kind = None
         self.drag_kind = None
         self.drag_start = None
         self.drag_bbox = None
@@ -958,6 +1053,511 @@ class GodimapOcrDebug:
                 label.configure(text=WAITING_TEXTS[self.ui_language])
         self.refresh_status()
         self.refresh_update_banner_locale()
+        self.refresh_favorite_controls()
+        self.rebuild_favorite_overlay()
+
+    def favorite_text(self, key):
+        return FAVORITE_TEXTS[self.ui_language][key]
+
+    def favorite_entries(self):
+        if self.ui_language not in ("KR", "JP"):
+            return []
+        return self.config["favorites"][self.ui_language]
+
+    def favorite_command(self, destination, language=None):
+        language = language or self.ui_language
+        prefix = "/이동 " if language == "KR" else "/MOVE "
+        return prefix + destination.strip()
+
+    def preferred_map_name(self, map_record, language=None):
+        language = language or self.ui_language
+        language_key = "ko" if language == "KR" else "ja"
+        names = map_record.get("names", {}).get(language_key, [])
+        if not isinstance(names, list):
+            names = [names]
+        return next((str(name).strip() for name in names if str(name).strip()), "")
+
+    def find_map_for_favorite(self, item):
+        map_id = str(item.get("map_id", "")).strip() if isinstance(item, dict) else ""
+        if map_id:
+            matched = next((record for record in self.maps if str(record.get("id", "")) == map_id), None)
+            if matched:
+                return matched
+        destination = str(item.get("destination", "")).strip() if isinstance(item, dict) else ""
+        if not destination:
+            return None
+        for record in self.maps:
+            for language_key in ("ko", "ja"):
+                names = record.get("names", {}).get(language_key, [])
+                if not isinstance(names, list):
+                    names = [names]
+                if any(str(name).strip() == destination for name in names):
+                    return record
+        return None
+
+    def synchronize_favorite_locales(self):
+        favorites = self.config["favorites"]
+        kr_items = favorites["KR"]
+        jp_items = favorites["JP"]
+        pair_count = min(5, max(len(kr_items), len(jp_items)))
+        synchronized = {"KR": [], "JP": []}
+        for index in range(pair_count):
+            kr_item = dict(kr_items[index]) if index < len(kr_items) and isinstance(kr_items[index], dict) else {}
+            jp_item = dict(jp_items[index]) if index < len(jp_items) and isinstance(jp_items[index], dict) else {}
+            map_record = self.find_map_for_favorite(kr_item) or self.find_map_for_favorite(jp_item)
+            map_id = str(map_record.get("id", "")) if map_record else str(kr_item.get("map_id") or jp_item.get("map_id") or "")
+            for language, item, other_item in (("KR", kr_item, jp_item), ("JP", jp_item, kr_item)):
+                destination = str(item.get("destination", "")).strip()
+                if not destination and map_record:
+                    destination = self.preferred_map_name(map_record, language)
+                if not destination:
+                    destination = str(other_item.get("destination", "")).strip()
+                if not destination:
+                    continue
+                label = str(item.get("label", "")).strip() or destination[:2]
+                synchronized[language].append({
+                    "map_id": map_id,
+                    "label": label[:10],
+                    "destination": destination[:80],
+                    "command": self.favorite_command(destination, language)[:100],
+                })
+            # Keep both lists aligned even when an old manually entered item
+            # cannot be matched to a map JSON.
+            if len(synchronized["KR"]) != len(synchronized["JP"]):
+                source_language = "KR" if len(synchronized["KR"]) > len(synchronized["JP"]) else "JP"
+                target_language = "JP" if source_language == "KR" else "KR"
+                source = synchronized[source_language][-1]
+                destination = source["destination"]
+                synchronized[target_language].append({
+                    "map_id": map_id,
+                    "label": destination[:2],
+                    "destination": destination,
+                    "command": self.favorite_command(destination, target_language)[:100],
+                })
+        self.config["favorites"] = synchronized
+
+    def refresh_favorite_controls(self):
+        if not hasattr(self, "favorite_buttons"):
+            return
+        texts = FAVORITE_TEXTS[self.ui_language]
+        enabled = self.ui_language in ("KR", "JP")
+        if not enabled:
+            self.favorite_overlay_editing = False
+        visible = bool(self.config.get("favorite_overlay_visible")) and enabled and bool(self.favorite_entries())
+        self.favorite_buttons["register"].configure(text=texts["register"], state="normal" if enabled else "disabled")
+        self.favorite_buttons["show"].configure(
+            text=texts["hide"] if visible else texts["show"],
+            state="normal" if enabled else "disabled",
+        )
+        self.favorite_buttons["edit"].configure(
+            text=texts["done"] if self.favorite_overlay_editing else texts["edit"],
+            state="normal" if enabled else "disabled",
+        )
+        if not enabled and hasattr(self, "favorite_window"):
+            self.favorite_window.withdraw()
+
+    def open_favorite_dialog(self):
+        if self.ui_language == "EN":
+            return
+        if hasattr(self, "favorite_dialog") and self.favorite_dialog.winfo_exists():
+            self.favorite_dialog.lift()
+            return
+        texts = FAVORITE_TEXTS[self.ui_language]
+        window = tk.Toplevel(self.root)
+        self.favorite_dialog = window
+        window.title(texts["title"])
+        window.transient(self.root)
+        window.grab_set()
+        window.minsize(720, 590)
+        window.geometry("780x650")
+        if self.window_icon is not None:
+            window.iconphoto(True, self.window_icon)
+
+        body = ttk.Frame(window, padding=12)
+        body.pack(fill="both", expand=True)
+        body.columnconfigure(0, weight=2)
+        body.columnconfigure(1, weight=3)
+        body.rowconfigure(1, weight=3)
+        body.rowconfigure(4, weight=2)
+
+        map_panel = ttk.Frame(body)
+        map_panel.grid(row=0, column=0, rowspan=2, sticky="nsew")
+        map_panel.columnconfigure(0, weight=1)
+        map_panel.rowconfigure(3, weight=1)
+        ttk.Label(map_panel, text=texts["map_list"]).grid(row=0, column=0, sticky="w", pady=(0, 5))
+        ttk.Label(map_panel, text=texts["search"]).grid(row=1, column=0, sticky="w")
+        search_var = tk.StringVar()
+        ttk.Entry(map_panel, textvariable=search_var).grid(row=2, column=0, sticky="ew", pady=(3, 7))
+        map_list = tk.Listbox(map_panel, exportselection=False, font=("맑은 고딕", 10))
+        map_scroll = ttk.Scrollbar(map_panel, orient="vertical", command=map_list.yview)
+        map_list.configure(yscrollcommand=map_scroll.set)
+        map_list.grid(row=3, column=0, sticky="nsew", padx=(0, 3))
+        map_scroll.grid(row=3, column=0, sticky="nse", padx=(0, 3))
+
+        form = ttk.LabelFrame(body, text=texts["title"], padding=10)
+        form.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(10, 0))
+        form.columnconfigure(0, weight=1)
+        destination_var = tk.StringVar()
+        label_var = tk.StringVar()
+        command_var = tk.StringVar()
+        editing_index = {"value": None}
+        selected_map_id = {"value": ""}
+
+        ttk.Label(form, text=texts["destination"]).grid(row=0, column=0, sticky="w")
+        destination_entry = ttk.Entry(form, textvariable=destination_var)
+        destination_entry.grid(row=1, column=0, sticky="ew", pady=(3, 12))
+        ttk.Label(form, text=texts["overlay_label"]).grid(row=2, column=0, sticky="w")
+        ttk.Entry(form, textvariable=label_var).grid(row=3, column=0, sticky="ew", pady=(3, 12))
+        ttk.Label(form, text=texts["command"]).grid(row=4, column=0, sticky="w")
+        ttk.Entry(form, textvariable=command_var, state="readonly").grid(row=5, column=0, sticky="ew", pady=(3, 14))
+
+        action_bar = ttk.Frame(form)
+        action_bar.grid(row=6, column=0, sticky="ew")
+        add_button = ttk.Button(action_bar, text=texts["add"])
+        update_button = ttk.Button(action_bar, text=texts["update"])
+        delete_button = ttk.Button(action_bar, text=texts["delete"])
+        add_button.pack(side="left", padx=(0, 5))
+        update_button.pack(side="left", padx=(0, 5))
+        delete_button.pack(side="left")
+
+        ttk.Label(body, text=texts["registered"]).grid(row=3, column=0, columnspan=2, sticky="w", pady=(14, 5))
+        columns = ("label", "destination", "command")
+        registered = ttk.Treeview(body, columns=columns, show="headings", selectmode="browse", height=6)
+        registered.heading("label", text=texts["label"])
+        registered.heading("destination", text=texts["map_name"])
+        registered.heading("command", text=texts["command"])
+        registered.column("label", width=85, stretch=False, anchor="center")
+        registered.column("destination", width=220)
+        registered.column("command", width=300)
+        registered.grid(row=4, column=0, columnspan=2, sticky="nsew")
+
+        all_map_items = []
+        seen = set()
+        for map_record in self.maps:
+            name = self.preferred_map_name(map_record)
+            if name and name not in seen:
+                seen.add(name)
+                all_map_items.append((name, str(map_record.get("id", ""))))
+        all_map_items.sort(key=lambda item: item[0].casefold())
+        displayed_map_items = list(all_map_items)
+
+        def filter_map_list(*_args):
+            query = unicodedata.normalize("NFKC", search_var.get()).strip().casefold()
+            displayed_map_items.clear()
+            displayed_map_items.extend(
+                item
+                for item in all_map_items
+                if not query or unicodedata.normalize("NFKC", item[0]).casefold().startswith(query)
+            )
+            map_list.delete(0, "end")
+            for name, _map_id in displayed_map_items:
+                map_list.insert("end", name)
+
+        search_var.trace_add("write", filter_map_list)
+        filter_map_list()
+
+        def update_command(*_args):
+            command_var.set(self.favorite_command(destination_var.get()) if destination_var.get().strip() else "")
+
+        destination_var.trace_add("write", update_command)
+
+        def refresh_registered():
+            registered.delete(*registered.get_children())
+            for index, item in enumerate(self.favorite_entries()):
+                destination = str(item.get("destination", "")).strip()
+                label = str(item.get("label", "")).strip()
+                command = str(item.get("command", "")).strip() or self.favorite_command(destination)
+                registered.insert("", "end", iid=str(index), values=(label, destination, command))
+            update_button.configure(state="normal" if editing_index["value"] is not None else "disabled")
+            delete_button.configure(state="normal" if editing_index["value"] is not None else "disabled")
+
+        def refresh_action_states():
+            state = "normal" if editing_index["value"] is not None else "disabled"
+            update_button.configure(state=state)
+            delete_button.configure(state=state)
+
+        def choose_map(_event=None):
+            selection = map_list.curselection()
+            if not selection:
+                return
+            if selection[0] >= len(displayed_map_items):
+                return
+            name, map_id = displayed_map_items[selection[0]]
+            editing_index["value"] = None
+            selected_map_id["value"] = map_id
+            destination_var.set(name)
+            label_var.set(name[:2])
+            registered.selection_remove(*registered.selection())
+            refresh_action_states()
+
+        def choose_registered(_event=None):
+            selection = registered.selection()
+            if not selection:
+                return
+            index = int(selection[0])
+            entries = self.favorite_entries()
+            if index >= len(entries):
+                return
+            editing_index["value"] = index
+            item = entries[index]
+            selected_map_id["value"] = str(item.get("map_id", ""))
+            destination_var.set(str(item.get("destination", "")))
+            label_var.set(str(item.get("label", "")))
+            refresh_action_states()
+
+        def validated_item():
+            destination = destination_var.get().strip()
+            if not destination:
+                messagebox.showinfo(texts["title"], texts["select_map"], parent=window)
+                return None
+            label = label_var.get().strip() or destination[:2]
+            return {
+                "map_id": selected_map_id["value"],
+                "label": label[:10],
+                "destination": destination[:80],
+                "command": self.favorite_command(destination)[:100],
+            }
+
+        def save_changes():
+            if not self.favorite_entries():
+                self.config["favorite_overlay_visible"] = False
+                self.favorite_overlay_editing = False
+                if hasattr(self, "favorite_window"):
+                    self.favorite_window.withdraw()
+            save_config(self.config)
+            self.rebuild_favorite_overlay()
+            self.refresh_favorite_controls()
+            refresh_registered()
+
+        def add_item():
+            item = validated_item()
+            if item is None:
+                return
+            entries = self.favorite_entries()
+            if len(entries) >= 5:
+                messagebox.showinfo(texts["title"], texts["limit"], parent=window)
+                return
+            map_record = next(
+                (record for record in self.maps if str(record.get("id", "")) == item["map_id"]),
+                None,
+            )
+            other_language = "JP" if self.ui_language == "KR" else "KR"
+            other_destination = self.preferred_map_name(map_record, other_language) if map_record else item["destination"]
+            if not other_destination:
+                other_destination = item["destination"]
+            other_item = {
+                "map_id": item["map_id"],
+                "label": other_destination[:2],
+                "destination": other_destination[:80],
+                "command": self.favorite_command(other_destination, other_language)[:100],
+            }
+            self.config["favorites"][self.ui_language].append(item)
+            self.config["favorites"][other_language].append(other_item)
+            editing_index["value"] = len(self.favorite_entries()) - 1
+            save_changes()
+            registered.selection_set(str(editing_index["value"]))
+
+        def update_item():
+            index = editing_index["value"]
+            item = validated_item()
+            if index is None or item is None:
+                return
+            entries = self.favorite_entries()
+            if index < len(entries):
+                entries[index] = item
+                save_changes()
+                registered.selection_set(str(index))
+
+        def delete_item():
+            index = editing_index["value"]
+            entries = self.favorite_entries()
+            if index is None or index >= len(entries):
+                return
+            for language in ("KR", "JP"):
+                locale_entries = self.config["favorites"][language]
+                if index < len(locale_entries):
+                    del locale_entries[index]
+            editing_index["value"] = None
+            selected_map_id["value"] = ""
+            destination_var.set("")
+            label_var.set("")
+            save_changes()
+
+        map_list.bind("<<ListboxSelect>>", choose_map)
+        registered.bind("<<TreeviewSelect>>", choose_registered)
+        add_button.configure(command=add_item)
+        update_button.configure(command=update_item)
+        delete_button.configure(command=delete_item)
+        refresh_registered()
+
+        def close():
+            try:
+                window.grab_release()
+            except Exception:
+                pass
+            window.destroy()
+
+        ttk.Button(body, text=texts["close"], command=close).grid(row=5, column=0, columnspan=2, sticky="e", pady=(12, 0))
+        window.protocol("WM_DELETE_WINDOW", close)
+
+    def create_favorite_overlay(self):
+        win = tk.Toplevel(self.root)
+        win.overrideredirect(True)
+        win.attributes("-topmost", False)
+        win.configure(bg="#171008")
+        self.favorite_frame = tk.Frame(win, bg="#171008", bd=2, relief="ridge")
+        self.favorite_frame.pack(fill="both", expand=True)
+        win.withdraw()
+        set_noactivate_toolwindow(win, click_through=False)
+        self.rebuild_favorite_overlay()
+        return win
+
+    def rebuild_favorite_overlay(self):
+        if not hasattr(self, "favorite_frame"):
+            return
+        for child in self.favorite_frame.winfo_children():
+            child.destroy()
+        for index, item in enumerate(self.favorite_entries()):
+            label = str(item.get("label", "")).strip() or str(item.get("destination", ""))[:2]
+            button = tk.Button(
+                self.favorite_frame,
+                text=label,
+                command=lambda item_index=index: self.copy_favorite(item_index),
+                bg="#4b2b17",
+                fg="#f6d58a",
+                activebackground="#75502b",
+                activeforeground="#fff0bd",
+                disabledforeground="#f6d58a",
+                relief="raised",
+                bd=2,
+                padx=9,
+                pady=4,
+                font=("맑은 고딕", 9, "bold"),
+                cursor="fleur" if self.favorite_overlay_editing else "hand2",
+                takefocus=False,
+            )
+            button.pack(side="left", padx=1, pady=1)
+            button.bind("<ButtonPress-1>", self.favorite_overlay_press, add="+")
+            button.bind("<B1-Motion>", self.favorite_overlay_drag, add="+")
+            button.bind("<ButtonRelease-1>", self.favorite_overlay_release, add="+")
+        if self.favorite_overlay_editing:
+            self.favorite_frame.configure(cursor="fleur", highlightthickness=2, highlightbackground="#ffd45a")
+        else:
+            self.favorite_frame.configure(cursor="arrow", highlightthickness=0)
+        if hasattr(self, "favorite_window") and self.config.get("favorite_overlay_visible") and self.ui_language != "EN":
+            self.show_favorite_overlay()
+
+    def copy_favorite(self, index):
+        if self.favorite_overlay_editing or self.ui_language == "EN":
+            return
+        entries = self.favorite_entries()
+        if index >= len(entries):
+            return
+        command = str(entries[index].get("command", "")).strip()
+        if not command:
+            command = self.favorite_command(str(entries[index].get("destination", "")))
+        self.root.clipboard_clear()
+        self.root.clipboard_append(command)
+        self.root.update()
+        self.favorite_copied_index = index
+        buttons = self.favorite_frame.winfo_children()
+        if index < len(buttons):
+            buttons[index].configure(text="Copied!")
+        if self.favorite_copied_after_id:
+            self.root.after_cancel(self.favorite_copied_after_id)
+        self.favorite_copied_after_id = self.root.after(900, self.restore_favorite_labels)
+
+    def restore_favorite_labels(self):
+        self.favorite_copied_after_id = None
+        self.favorite_copied_index = None
+        self.rebuild_favorite_overlay()
+
+    def toggle_favorite_overlay(self):
+        if self.ui_language == "EN":
+            return
+        if not self.favorite_entries():
+            messagebox.showinfo(self.favorite_text("title"), self.favorite_text("empty"), parent=self.root)
+            return
+        visible = bool(self.config.get("favorite_overlay_visible"))
+        self.config["favorite_overlay_visible"] = not visible
+        if visible:
+            self.favorite_overlay_editing = False
+            self.favorite_window.withdraw()
+        else:
+            self.rebuild_favorite_overlay()
+            self.show_favorite_overlay()
+        save_config(self.config)
+        self.refresh_favorite_controls()
+
+    def toggle_favorite_edit_mode(self):
+        if self.ui_language == "EN":
+            return
+        if not self.config.get("favorite_overlay_visible") or not self.favorite_window.winfo_viewable():
+            messagebox.showinfo(self.favorite_text("title"), self.favorite_text("show_first"), parent=self.root)
+            return
+        self.favorite_overlay_editing = not self.favorite_overlay_editing
+        self.rebuild_favorite_overlay()
+        self.refresh_favorite_controls()
+        if not self.favorite_overlay_editing:
+            save_config(self.config)
+
+    def favorite_overlay_press(self, event):
+        if not self.favorite_overlay_editing:
+            return
+        self.favorite_drag_start = (event.x_root, event.y_root)
+        self.favorite_drag_origin = (self.favorite_window.winfo_x(), self.favorite_window.winfo_y())
+
+    def favorite_overlay_drag(self, event):
+        if not self.favorite_overlay_editing or not self.favorite_drag_start or not self.favorite_drag_origin:
+            return
+        dx = event.x_root - self.favorite_drag_start[0]
+        dy = event.y_root - self.favorite_drag_start[1]
+        x = self.favorite_drag_origin[0] + dx
+        y = self.favorite_drag_origin[1] + dy
+        client = self.get_stable_client_rect()
+        if client:
+            left, top, right, bottom = client
+            width = self.favorite_window.winfo_width()
+            height = self.favorite_window.winfo_height()
+            x = max(left, min(x, right - width))
+            y = max(top, min(y, bottom - height))
+        self.favorite_window.geometry(f"+{round(x)}+{round(y)}")
+
+    def favorite_overlay_release(self, _event):
+        if self.favorite_overlay_editing and self.favorite_drag_start:
+            client = self.get_stable_client_rect()
+            if client:
+                self.config["favorite_overlay_offset_x"] = self.favorite_window.winfo_x() - client[0]
+                self.config["favorite_overlay_offset_y"] = self.favorite_window.winfo_y() - client[1]
+                save_config(self.config)
+        self.favorite_drag_start = None
+        self.favorite_drag_origin = None
+
+    def position_favorite_overlay(self):
+        client = self.get_stable_client_rect()
+        if not client:
+            return
+        self.favorite_window.update_idletasks()
+        left, top, right, bottom = client
+        width = max(1, self.favorite_window.winfo_reqwidth())
+        height = max(1, self.favorite_window.winfo_reqheight())
+        offset_x = self.config.get("favorite_overlay_offset_x")
+        offset_y = self.config.get("favorite_overlay_offset_y")
+        if offset_x is None or offset_y is None:
+            offset_x = max(10, right - left - width - 18)
+            offset_y = max(10, round((bottom - top) * 0.72) - height)
+            self.config["favorite_overlay_offset_x"] = offset_x
+            self.config["favorite_overlay_offset_y"] = offset_y
+        x = max(left, min(left + int(offset_x), right - width))
+        y = max(top, min(top + int(offset_y), bottom - height))
+        self.favorite_window.geometry(f"{width}x{height}+{x}+{y}")
+
+    def show_favorite_overlay(self):
+        if self.ui_language == "EN" or not self.favorite_entries() or not self.find_target():
+            self.favorite_window.withdraw()
+            return
+        self.position_favorite_overlay()
+        show_above_owner(self.favorite_window, self.target_hwnd)
 
     def show_help(self):
         if hasattr(self, "help_window") and self.help_window.winfo_exists():
@@ -967,41 +1567,56 @@ class GodimapOcrDebug:
         help_texts = {
             "KR": (
                 "캡처 영역 설정\n"
-                "  F11 : 맵 이름 OCR 영역 설정\n"
-                "  Shift + F11 : X:Y 좌표 OCR 영역 설정\n\n"
+                "  F11 : 월드맵 표시/숨기기\n"
+                "  Shift + F11 : 맵 이름과 X:Y 좌표 OCR 영역 동시 편집\n\n"
                 "  박스 드래그 : 영역 이동\n"
                 "  우측 하단 손잡이 드래그 : 영역 크기 조절\n\n"
                 "미니맵 조작\n"
-                "  Ctrl + F11 : 크기 조절 모드 시작/종료\n"
+                "  Ctrl + F11 : 현재 미니맵/월드맵의 위치·크기·불투명도 조절\n"
                 "  우측 하단 노란 손잡이 드래그 : 크기 조절 (40~500%)\n"
                 "  마우스 휠 : 불투명도 조절 (30~100%)\n"
                 "  드래그 : 미니맵 이동\n\n"
+                "즐겨찾기\n"
+                "  등록 : 맵을 선택하고 복사할 이동 명령어를 저장\n"
+                "  KR/JP 항목은 함께 생성되며 수정은 현재 언어에만 반영\n"
+                "  표시/비표시 : 게임 안의 즐겨찾기 버튼을 켜거나 끔\n"
+                "  편집/완료 : 즐겨찾기 버튼 오버레이의 위치를 이동\n"
+                "  버튼 클릭 : 명령어를 클립보드에 복사 (자동 입력하지 않음)\n\n"
                 "OCR은 Godius Client가 전면에 있을 때만 실행됩니다."
             ),
             "JP": (
                 "キャプチャー範囲の設定\n"
-                "  F11 : マップ名のOCR範囲を設定\n"
-                "  Shift + F11 : X:Y座標のOCR範囲を設定\n\n"
+                "  F11 : ワールドマップを表示／非表示\n"
+                "  Shift + F11 : マップ名とX:Y座標のOCR範囲を同時編集\n\n"
                 "  ボックスをドラッグ : 範囲を移動\n"
                 "  右下のハンドルをドラッグ : 範囲のサイズを変更\n\n"
                 "ミニマップ操作\n"
-                "  Ctrl + F11 : サイズ変更モードの開始／終了\n"
+                "  Ctrl + F11 : 表示中のミニマップ／ワールドマップの位置・サイズ・不透明度を調整\n"
                 "  右下の黄色いハンドルをドラッグ : サイズ変更（40～500%）\n"
                 "  マウスホイール : 不透明度の調整（30～100%）\n"
                 "  ドラッグ : ミニマップの移動\n\n"
+                "お気に入り\n"
+                "  登録 : マップを選び、コピーする移動コマンドを保存\n"
+                "  KR/JP項目は同時に作成され、変更は現在の言語だけに反映\n"
+                "  表示／非表示 : ゲーム内のお気に入りボタンを表示／非表示\n"
+                "  編集／完了 : お気に入りオーバーレイの位置を移動\n"
+                "  ボタンをクリック : コマンドをクリップボードへコピー（自動入力なし）\n\n"
                 "OCRはGodius Clientが最前面にある場合のみ実行されます。"
             ),
             "EN": (
                 "Capture regions\n"
-                "  F11 : Set the map-name OCR region\n"
-                "  Shift + F11 : Set the X:Y coordinate OCR region\n\n"
+                "  F11 : Show or hide the world map\n"
+                "  Shift + F11 : Edit the map-name and X:Y OCR regions together\n\n"
                 "  Drag the box : Move the region\n"
                 "  Drag the bottom-right handle : Resize the region\n\n"
                 "Minimap controls\n"
-                "  Ctrl + F11 : Enter or leave resize mode\n"
+                "  Ctrl + F11 : Adjust the current minimap/world map position, size, and opacity\n"
+                "  Ctrl + F11 while world map is shown : Adjust its size/opacity\n"
                 "  Drag the yellow bottom-right handle : Resize (40–500%)\n"
                 "  Mouse wheel : Adjust opacity (30–100%)\n"
                 "  Drag : Move the minimap\n\n"
+                "Favorites\n"
+                "  This feature is unavailable in the English interface.\n\n"
                 "OCR runs only while Godius Client is in the foreground."
             ),
         }
@@ -1064,6 +1679,131 @@ class GodimapOcrDebug:
         set_window_click_through(win, True)
         return win
 
+    def load_world_map_image(self):
+        path = RESOURCE_DIR / "maps" / "other" / "worldmap.jpg"
+        if not path.is_file():
+            self.world_map_original_image = None
+            return False
+        try:
+            self.world_map_original_image = Image.open(path).convert("RGBA")
+            self.world_map_render_key = None
+            return True
+        except Exception:
+            self.world_map_original_image = None
+            return False
+
+    def render_world_map(self):
+        if not self.world_map_mode or self.world_map_original_image is None:
+            return
+        client = self.get_stable_client_rect()
+        if not client:
+            return
+        left, top, right, bottom = client
+        client_width = max(1, right - left)
+        client_height = max(1, bottom - top)
+        source_width, source_height = self.world_map_original_image.size
+        fit_ratio = min((client_width * 0.92) / source_width, (client_height * 0.92) / source_height, 1.0)
+        size_scale = max(0.4, min(1.0, float(self.config.get("world_map_size_scale", 1.0))))
+        self.config["world_map_size_scale"] = size_scale
+        ratio = fit_ratio * size_scale
+        width = max(1, round(source_width * ratio))
+        height = max(1, round(source_height * ratio))
+        self.world_map_scale = ratio
+        x = left + (client_width - width) // 2
+        y = top + (client_height - height) // 2
+        self.map_window.geometry(f"{width + 4}x{height + 4}+{x}+{y}")
+        self.map_width = width + 4
+        self.map_height = height + 4
+        position = self.active_map.get("worldMapPosition") if self.active_map else None
+        position_key = None
+        if isinstance(position, dict):
+            position_key = (position.get("x"), position.get("y"))
+        render_key = (width, height, str(self.active_map.get("id", "")) if self.active_map else "", position_key)
+        if render_key == self.world_map_render_key:
+            return
+        self.world_map_render_key = render_key
+        image = self.world_map_original_image.resize((width, height), Image.Resampling.LANCZOS)
+        self.world_map_photo = ImageTk.PhotoImage(image)
+        self.map_canvas.configure(
+            width=width,
+            height=height,
+            highlightbackground="#7a1c1c",
+            highlightcolor="#7a1c1c",
+        )
+        self.map_canvas.delete("all")
+        self.map_canvas.create_image(0, 0, image=self.world_map_photo, anchor="nw")
+
+        if isinstance(position, dict):
+            try:
+                marker_x = round(float(position["x"]) * ratio)
+                marker_y = round(float(position["y"]) * ratio)
+                marker_x = max(12, min(width - 12, marker_x))
+                marker_y = max(26, min(height - 4, marker_y))
+                # The polygon tip is the stored world-map pixel. A black outer
+                # arrow keeps the red marker visible over bright terrain.
+                outer = (
+                    marker_x - 13, marker_y - 34,
+                    marker_x + 13, marker_y - 34,
+                    marker_x + 13, marker_y - 18,
+                    marker_x + 23, marker_y - 18,
+                    marker_x, marker_y + 2,
+                    marker_x - 23, marker_y - 18,
+                    marker_x - 13, marker_y - 18,
+                )
+                inner = (
+                    marker_x - 9, marker_y - 30,
+                    marker_x + 9, marker_y - 30,
+                    marker_x + 9, marker_y - 15,
+                    marker_x + 16, marker_y - 15,
+                    marker_x, marker_y - 1,
+                    marker_x - 16, marker_y - 15,
+                    marker_x - 9, marker_y - 15,
+                )
+                self.map_canvas.create_polygon(*outer, fill="#000000", outline="#000000")
+                self.map_canvas.create_polygon(*inner, fill="#ff2020", outline="#ff6666", width=2)
+            except (KeyError, TypeError, ValueError):
+                pass
+        self.draw_resize_handles()
+        self.draw_adjustment_indicators()
+
+    def show_world_map(self):
+        self.render_world_map()
+        show_above_owner(self.map_window, self.target_hwnd)
+        set_window_click_through(self.map_window, not self.map_resize_mode)
+
+    def hide_world_map(self):
+        if self.map_window.winfo_viewable():
+            self.map_window.withdraw()
+
+    def toggle_world_map(self):
+        if self.world_map_mode:
+            self.world_map_mode = False
+            self.map_resize_mode = False
+            set_window_click_through(self.map_window, True)
+            self.hide_world_map()
+            if self.active_map:
+                self.map_canvas.configure(highlightbackground="#444444", highlightcolor="#444444")
+                self.apply_map_size()
+                self.apply_map_opacity()
+                self.show_map()
+            return
+        if not self.find_target():
+            self.set_status("target_missing", "#ff7777")
+            return
+        if not self.load_world_map_image():
+            self.set_status("world_map_missing", "#ff7777")
+            return
+        self.calibration_mode = None
+        self.region_window.withdraw()
+        self.coordinate_region_window.withdraw()
+        self.map_resize_mode = False
+        set_window_click_through(self.map_window, True)
+        self.hide_map()
+        self.world_map_mode = True
+        self.apply_map_opacity()
+        self.set_status("world_map_open", "#ff7777")
+        self.show_world_map()
+
     def set_active_map(self, map_record):
         self.no_map_data_visible = False
         self.no_map_data_shown_at = None
@@ -1089,6 +1829,8 @@ class GodimapOcrDebug:
             self.credit_started_at = None
             self.credit_visible_until = 0.0
         self.apply_map_size()
+        if self.world_map_mode:
+            self.render_world_map()
 
     def apply_map_size(self):
         if self.map_original_image is None:
@@ -1113,17 +1855,20 @@ class GodimapOcrDebug:
             self.position_map()
 
     def toggle_map_resize_mode(self):
-        if not self.active_map:
+        if not self.world_map_mode and not self.active_map:
             self.set_status("no_map_resize")
             return
         self.calibration_mode = None
         self.region_window.withdraw()
+        self.coordinate_region_window.withdraw()
         self.map_resize_mode = not self.map_resize_mode
         set_window_click_through(self.map_window, not self.map_resize_mode)
         border_color = "#ffe000" if self.map_resize_mode else "#444444"
         self.map_canvas.configure(highlightbackground=border_color, highlightcolor=border_color)
+        if self.world_map_mode:
+            self.world_map_render_key = None
         if self.map_resize_mode:
-            self.set_status("resize_mode", "#ffe27a")
+            self.set_status("world_resize_mode" if self.world_map_mode else "resize_mode", "#ffe27a")
             self.render_map()
             self.show_map()
         else:
@@ -1135,18 +1880,22 @@ class GodimapOcrDebug:
     def map_wheel(self, event):
         if not self.map_resize_mode:
             return
-        current = int(self.config.get("map_opacity_percent", 100))
+        opacity_key = "world_map_opacity_percent" if self.world_map_mode else "map_opacity_percent"
+        current = int(self.config.get(opacity_key, 100))
         change = 5 if event.delta > 0 else -5
-        self.config["map_opacity_percent"] = max(30, min(100, current + change))
+        self.config[opacity_key] = max(30, min(100, current + change))
         self.apply_map_opacity()
         save_config(self.config)
         self.opacity_indicator_until = time.monotonic() + 1.0
         self.draw_adjustment_indicators()
-        percent = self.config["map_opacity_percent"]
-        self.set_status("opacity", "#ffe27a", percent=percent)
+        percent = self.config[opacity_key]
+        self.set_status("world_opacity" if self.world_map_mode else "opacity", "#ffe27a", percent=percent)
         return "break"
 
     def render_map(self):
+        if self.world_map_mode:
+            self.render_world_map()
+            return
         if self.map_base_image is None or self.no_map_data_visible:
             return
         image = self.map_base_image.copy()
@@ -1280,16 +2029,18 @@ class GodimapOcrDebug:
         self.map_canvas.delete("opacity_indicator")
         now = time.monotonic()
         if now < self.opacity_indicator_until:
+            opacity_key = "world_map_opacity_percent" if self.world_map_mode else "map_opacity_percent"
             self.draw_corner_indicator(
-                f"{int(self.config.get('map_opacity_percent', 100))}%",
+                f"{int(self.config.get(opacity_key, 100))}%",
                 8,
                 "nw",
                 "opacity_indicator",
             )
         if now < self.scale_indicator_until and not self.no_map_data_visible:
             width = int(float(self.map_canvas.cget("width")))
+            scale_key = "world_map_size_scale" if self.world_map_mode else "map_size_scale"
             self.draw_corner_indicator(
-                f"{round(float(self.config.get('map_size_scale', 1.0)) * 100)}%",
+                f"{round(float(self.config.get(scale_key, 1.0)) * 100)}%",
                 width - 8,
                 "ne",
                 "scale_indicator",
@@ -1319,8 +2070,9 @@ class GodimapOcrDebug:
             self.map_canvas.tag_lower(background, text_id)
 
     def apply_map_opacity(self):
-        percent = max(30, min(100, int(self.config.get("map_opacity_percent", 100))))
-        self.config["map_opacity_percent"] = percent
+        opacity_key = "world_map_opacity_percent" if self.world_map_mode else "map_opacity_percent"
+        percent = max(30, min(100, int(self.config.get(opacity_key, 100))))
+        self.config[opacity_key] = percent
         self.map_window.attributes("-alpha", percent / 100.0)
 
     def show_no_map_data(self):
@@ -1398,8 +2150,11 @@ class GodimapOcrDebug:
                 "bl": (x + self.map_width, y),
                 "br": (x, y),
             }[corner]
-            self.map_resize_start_scale = float(self.config.get("map_size_scale", 1.0))
-            self.map_resize_start_size = (self.map_width, self.map_height)
+            scale_key = "world_map_size_scale" if self.world_map_mode else "map_size_scale"
+            self.map_resize_start_scale = float(self.config.get(scale_key, 1.0))
+            self.map_resize_start_size = (self.map_window.winfo_width(), self.map_window.winfo_height())
+            return
+        if self.world_map_mode:
             return
         self.map_dragging = True
         self.map_drag_start = (event.x_root, event.y_root)
@@ -1413,8 +2168,16 @@ class GodimapOcrDebug:
             desired_height = event.y_root - anchor_y
             start_diagonal = max(1.0, (start_width**2 + start_height**2) ** 0.5)
             ratio = (desired_width**2 + desired_height**2) ** 0.5 / start_diagonal
-            self.config["map_size_scale"] = round(max(0.4, min(5.0, self.map_resize_start_scale * ratio)), 4)
+            scale_key = "world_map_size_scale" if self.world_map_mode else "map_size_scale"
+            maximum = 1.0 if self.world_map_mode else 5.0
+            self.config[scale_key] = round(max(0.4, min(maximum, self.map_resize_start_scale * ratio)), 4)
             self.scale_indicator_until = time.monotonic() + 1.0
+            if self.world_map_mode:
+                self.world_map_render_key = None
+                self.render_world_map()
+                percent = round(self.config[scale_key] * 100)
+                self.set_status("world_size", "#ffe27a", percent=percent)
+                return
             self.apply_map_size()
             if "l" in self.map_resize_corner:
                 x = anchor_x - self.map_width
@@ -1425,7 +2188,7 @@ class GodimapOcrDebug:
             else:
                 y = anchor_y
             self.map_window.geometry(f"{self.map_width}x{self.map_height}+{round(x)}+{round(y)}")
-            percent = round(self.config["map_size_scale"] * 100)
+            percent = round(self.config[scale_key] * 100)
             self.set_status("size", "#ffe27a", percent=percent)
             return
         if not self.map_dragging or not self.map_drag_start or not self.map_drag_origin:
@@ -1448,7 +2211,8 @@ class GodimapOcrDebug:
             self.map_resize_anchor = None
             self.map_resize_start_scale = None
             self.map_resize_start_size = None
-            self.save_map_position()
+            if not self.world_map_mode:
+                self.save_map_position()
             save_config(self.config)
             self.draw_resize_handles()
             return
@@ -1466,7 +2230,7 @@ class GodimapOcrDebug:
             self.config["map_offset_x"] = self.map_window.winfo_x() - client[0]
             self.config["map_offset_y"] = self.map_window.winfo_y() - client[1]
 
-    def create_region_window(self):
+    def create_region_window(self, kind):
         win = tk.Toplevel(self.root)
         win.overrideredirect(True)
         win.attributes("-topmost", True)
@@ -1475,10 +2239,10 @@ class GodimapOcrDebug:
         win.wm_attributes("-transparentcolor", "#ff00ff")
         canvas = tk.Canvas(win, bg="#ff00ff", highlightthickness=0, cursor="fleur")
         canvas.pack(fill="both", expand=True)
-        canvas.bind("<ButtonPress-1>", self.region_press)
-        canvas.bind("<B1-Motion>", self.region_drag)
-        canvas.bind("<ButtonRelease-1>", self.region_release)
-        canvas.bind("<Motion>", self.region_pointer_motion)
+        canvas.bind("<ButtonPress-1>", lambda event: self.region_press(event, kind))
+        canvas.bind("<B1-Motion>", lambda event: self.region_drag(event, kind))
+        canvas.bind("<ButtonRelease-1>", lambda event: self.region_release(event, kind))
+        canvas.bind("<Motion>", lambda event: self.region_pointer_motion(event, kind))
         canvas.bind("<Leave>", lambda _event: canvas.configure(cursor="fleur"))
         win.withdraw()
         set_noactivate_toolwindow(win)
@@ -1502,6 +2266,9 @@ class GodimapOcrDebug:
         if self.map_resize_mode:
             map_root = user32.GetAncestor(self.map_window.winfo_id(), GA_ROOT) or self.map_window.winfo_id()
             return foreground == map_root
+        favorite_root = user32.GetAncestor(self.favorite_window.winfo_id(), GA_ROOT) or self.favorite_window.winfo_id()
+        if foreground == favorite_root:
+            return True
         return False
 
     def is_target_foreground(self):
@@ -1517,9 +2284,14 @@ class GodimapOcrDebug:
         if self.map_resize_mode:
             map_root = user32.GetAncestor(self.map_window.winfo_id(), GA_ROOT) or self.map_window.winfo_id()
             return foreground_root == map_root
+        favorite_root = user32.GetAncestor(self.favorite_window.winfo_id(), GA_ROOT) or self.favorite_window.winfo_id()
+        if foreground_root == favorite_root:
+            return True
         if self.calibration_mode:
-            region_root = user32.GetAncestor(self.region_window.winfo_id(), GA_ROOT) or self.region_window.winfo_id()
-            return foreground_root == region_root
+            for region_window in (self.region_window, self.coordinate_region_window):
+                region_root = user32.GetAncestor(region_window.winfo_id(), GA_ROOT) or region_window.winfo_id()
+                if foreground_root == region_root:
+                    return True
         return False
 
     def reload_map_database_if_changed(self):
@@ -1534,6 +2306,8 @@ class GodimapOcrDebug:
             updated_active = next((item for item in self.maps if item.get("id") == active_id), None)
             if updated_active:
                 self.active_map = updated_active
+                if self.world_map_mode:
+                    self.render_world_map()
             else:
                 self.active_map = None
                 self.current_game_coordinate = None
@@ -1607,14 +2381,14 @@ class GodimapOcrDebug:
         top = max(ct, min(top, cb - 24))
         right = max(left + 40, min(right, cr))
         bottom = max(top + 24, min(bottom, cb))
-        kind = kind or self.calibration_mode or "name"
+        kind = kind or "name"
         region_key = "coordinate_region" if kind == "coordinates" else "capture_region"
         reference_key = "coordinate_reference_size" if kind == "coordinates" else "capture_reference_size"
         self.config[region_key] = [left - cl, top - ct, right - cl, bottom - ct]
         self.config[reference_key] = [cr - cl, cb - ct]
         save_config(self.config)
 
-    def toggle_calibration(self, kind):
+    def toggle_calibration(self):
         if not self.find_target():
             self.set_status("target_missing", "#ff7777")
             return
@@ -1626,29 +2400,37 @@ class GodimapOcrDebug:
             if self.target_hwnd:
                 user32.SetForegroundWindow(self.target_hwnd)
             save_config(self.config)
-        if self.calibration_mode == kind:
-            bbox = self.capture_bbox or self.current_bbox(kind, allow_default=True)
-            if bbox:
-                self.store_bbox(bbox, kind)
+        if self.calibration_mode:
+            for kind in ("name", "coordinates"):
+                bbox = self.capture_bboxes.get(kind) or self.current_bbox(kind, allow_default=True)
+                if bbox:
+                    self.store_bbox(bbox, kind)
             self.calibration_mode = None
             self.region_window.withdraw()
+            self.coordinate_region_window.withdraw()
         else:
-            self.calibration_mode = kind
-            self.capture_bbox = self.current_bbox(kind, allow_default=True)
+            if self.world_map_mode:
+                self.toggle_world_map()
+            self.calibration_mode = "both"
+            for kind in ("name", "coordinates"):
+                self.capture_bboxes[kind] = self.current_bbox(kind, allow_default=True)
             self.hide_map()
-            self.update_region_window()
+            self.update_region_windows()
 
-    def update_region_window(self):
-        kind = self.calibration_mode or "name"
+    def update_region_windows(self):
+        self.update_region_window("name", self.region_window)
+        self.update_region_window("coordinates", self.coordinate_region_window)
+
+    def update_region_window(self, kind, region_window):
         bbox = self.current_bbox(kind, allow_default=True)
         if not bbox:
             return
-        self.capture_bbox = bbox
+        self.capture_bboxes[kind] = bbox
         left, top, right, bottom = bbox
         width = max(40, right - left)
         height = max(24, bottom - top)
-        self.region_window.geometry(f"{width}x{height}+{left}+{top}")
-        canvas = self.region_window.winfo_children()[0]
+        region_window.geometry(f"{width}x{height}+{left}+{top}")
+        canvas = region_window.winfo_children()[0]
         canvas.configure(width=width, height=height)
         canvas.delete("all")
         color = "#ffd400" if kind == "coordinates" else "#ff3535"
@@ -1658,29 +2440,32 @@ class GodimapOcrDebug:
         x = width - handle - 2
         y = height - handle - 2
         canvas.create_oval(x, y, x + handle, y + handle, fill="white", outline=color, width=2)
-        self.region_window.deiconify()
-        keep_topmost(self.region_window)
+        region_window.deiconify()
+        keep_topmost(region_window)
 
-    def region_press(self, event):
-        width = max(1, self.region_window.winfo_width())
-        height = max(1, self.region_window.winfo_height())
+    def region_press(self, event, kind):
+        region_window = self.coordinate_region_window if kind == "coordinates" else self.region_window
+        width = max(1, region_window.winfo_width())
+        height = max(1, region_window.winfo_height())
         margin = 24
         right = event.x >= width - margin
         bottom = event.y >= height - margin
         self.drag_kind = "br" if right and bottom else "move"
+        self.drag_region_kind = kind
         self.drag_start = (event.x_root, event.y_root)
-        self.drag_bbox = self.capture_bbox or self.current_bbox(self.calibration_mode or "name", allow_default=True)
+        self.drag_bbox = self.capture_bboxes.get(kind) or self.current_bbox(kind, allow_default=True)
 
-    def region_pointer_motion(self, event):
-        width = max(1, self.region_window.winfo_width())
-        height = max(1, self.region_window.winfo_height())
+    def region_pointer_motion(self, event, kind):
+        region_window = self.coordinate_region_window if kind == "coordinates" else self.region_window
+        width = max(1, region_window.winfo_width())
+        height = max(1, region_window.winfo_height())
         if event.x >= width - 24 and event.y >= height - 24:
             event.widget.configure(cursor="size_nw_se")
         else:
             event.widget.configure(cursor="fleur")
 
-    def region_drag(self, event):
-        if not self.drag_start or not self.drag_bbox:
+    def region_drag(self, event, kind):
+        if self.drag_region_kind != kind or not self.drag_start or not self.drag_bbox:
             return
         dx = event.x_root - self.drag_start[0]
         dy = event.y_root - self.drag_start[1]
@@ -1696,13 +2481,15 @@ class GodimapOcrDebug:
                 t = min(t + dy, b - 24)
             if "b" in self.drag_kind:
                 b = max(b + dy, t + 24)
-        self.capture_bbox = (round(l), round(t), round(r), round(b))
-        self.store_bbox(self.capture_bbox, self.calibration_mode)
-        self.update_region_window()
+        self.capture_bboxes[kind] = (round(l), round(t), round(r), round(b))
+        self.store_bbox(self.capture_bboxes[kind], kind)
+        region_window = self.coordinate_region_window if kind == "coordinates" else self.region_window
+        self.update_region_window(kind, region_window)
 
-    def region_release(self, _event):
-        if self.capture_bbox:
-            self.store_bbox(self.capture_bbox, self.calibration_mode)
+    def region_release(self, _event, kind):
+        if self.drag_region_kind == kind and self.capture_bboxes.get(kind):
+            self.store_bbox(self.capture_bboxes[kind], kind)
+        self.drag_region_kind = None
         self.drag_start = None
         self.drag_bbox = None
         self.drag_kind = None
@@ -1893,6 +2680,9 @@ class GodimapOcrDebug:
     def position_map(self):
         if self.map_dragging or self.map_resizing:
             return
+        if self.world_map_mode:
+            self.render_world_map()
+            return
         client = self.get_stable_client_rect()
         if not client:
             return
@@ -1911,6 +2701,9 @@ class GodimapOcrDebug:
         self.map_window.geometry(f"{self.map_width}x{self.map_height}+{round(x)}+{round(y)}")
 
     def show_map(self):
+        if self.world_map_mode:
+            self.show_world_map()
+            return
         self.position_map()
         show_above_owner(self.map_window, self.target_hwnd)
         # Deiconify/owner changes can cause Tk or Windows to rebuild extended
@@ -1930,20 +2723,40 @@ class GodimapOcrDebug:
         if toggle_down and not self.last_toggle_down:
             shift_down = bool(user32.GetAsyncKeyState(VK_SHIFT) & 0x8000)
             control_down = bool(user32.GetAsyncKeyState(VK_CONTROL) & 0x8000)
+            alt_down = bool(user32.GetAsyncKeyState(VK_MENU) & 0x8000)
             if control_down:
                 self.toggle_map_resize_mode()
-            else:
-                self.toggle_calibration("coordinates" if shift_down else "name")
+            elif shift_down:
+                self.toggle_calibration()
+            elif not alt_down:
+                self.toggle_world_map()
         self.last_toggle_down = toggle_down
 
+        favorite_should_show = (
+            self.ui_language in ("KR", "JP")
+            and bool(self.config.get("favorite_overlay_visible"))
+            and bool(self.favorite_entries())
+            and bool(self.target_hwnd)
+            and not user32.IsIconic(self.target_hwnd)
+        )
+        if favorite_should_show:
+            if not self.favorite_drag_start:
+                self.position_favorite_overlay()
+            if not self.favorite_window.winfo_viewable():
+                show_above_owner(self.favorite_window, self.target_hwnd)
+        elif self.favorite_window.winfo_viewable():
+            self.favorite_window.withdraw()
+
         if self.calibration_mode:
-            self.update_region_window()
+            self.update_region_windows()
         elif not self.target_hwnd:
             self.set_status("target_missing", "#ff7777")
             self.hide_map()
+            self.hide_world_map()
         elif user32.IsIconic(self.target_hwnd):
             self.set_status("minimized")
             self.hide_map()
+            self.hide_world_map()
         elif not self.can_capture_game():
             self.set_status("other_foreground")
         elif not self.ocr_running:
@@ -1955,6 +2768,10 @@ class GodimapOcrDebug:
 
         if self.map_window.winfo_viewable() and self.target_hwnd:
             self.position_map()
+        if self.world_map_mode and self.map_window.winfo_viewable() and self.target_hwnd:
+            self.render_world_map()
+        elif self.world_map_mode and self.target_hwnd and not user32.IsIconic(self.target_hwnd):
+            self.show_world_map()
 
         now = time.monotonic()
         if self.update_future is not None and self.update_future.done():

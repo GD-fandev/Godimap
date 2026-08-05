@@ -6,7 +6,7 @@ import urllib.request
 import certifi
 
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 LATEST_RELEASE_API = "https://api.github.com/repos/GD-fandev/Godimap/releases/latest"
 USER_AGENT = "GODIMAP-VersionChecker/1.0"
 
